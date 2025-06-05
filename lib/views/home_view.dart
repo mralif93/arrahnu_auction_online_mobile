@@ -10,68 +10,781 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 12),
+        child: SingleChildScrollView(child: _buildResponsiveLayout(context)),
+      ),
+    );
+  }
 
-                // Logo Section
-                _buildLogo(),
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = _isTabletSize(screenWidth);
 
-                const SizedBox(height: 20),
+    if (isTablet) {
+      return _buildTabletLayout(context, screenWidth);
+    } else {
+      return _buildMobileLayout();
+    }
+  }
 
-                // Conditional Content Based on Auction Status
-                Obx(() {
-                  final status = controller.auctionStatus.value;
-                  if (status == AuctionStatus.beforeStart ||
-                      status == AuctionStatus.ended) {
-                    // Before start or ended - only show session info
-                    return Column(
+  bool _isTabletSize(double screenWidth) {
+    // Tablet sizes: 10" (~768px), 11" (~834px), 12" (~1024px), 13" (~1112px), 14" (~1194px)
+    return screenWidth >= 768;
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+
+          // Logo Section
+          _buildLogo(),
+
+          const SizedBox(height: 20),
+
+          // Conditional Content Based on Auction Status
+          Obx(() {
+            final status = controller.auctionStatus.value;
+            if (status == AuctionStatus.beforeStart ||
+                status == AuctionStatus.ended) {
+              // Before start or ended - only show session info
+              return Column(
+                children: [
+                  _buildBiddingSessionInfo(),
+                  const SizedBox(height: 20),
+                  // Show test buttons for demo
+                  _buildTestControls(),
+                  const SizedBox(height: 20),
+                ],
+              );
+            } else if (status == AuctionStatus.active) {
+              // During auction - show all components
+              return Column(
+                children: [
+                  // Search Bar
+                  _buildSearchBar(),
+                  const SizedBox(height: 20),
+
+                  // Categories Section
+                  _buildCategoriesSection(),
+                  const SizedBox(height: 20),
+
+                  // Featured Auctions Section
+                  _buildFeaturedAuctionsSection(),
+                  const SizedBox(height: 20),
+
+                  // Live Auction Banner
+                  _buildLiveAuctionBanner(),
+                  const SizedBox(height: 20),
+
+                  // Show test buttons for demo
+                  _buildTestControls(),
+                  const SizedBox(height: 16),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(BuildContext context, double screenWidth) {
+    final tabletPadding = _getTabletPadding(screenWidth);
+    final isLargeTablet = screenWidth >= 1024; // 12"+ tablets
+
+    return Padding(
+      padding: EdgeInsets.all(tabletPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 16),
+
+          // Logo Section - Tablet optimized
+          _buildTabletLogo(screenWidth),
+
+          const SizedBox(height: 24),
+
+          // Conditional Content Based on Auction Status
+          Obx(() {
+            final status = controller.auctionStatus.value;
+            if (status == AuctionStatus.beforeStart ||
+                status == AuctionStatus.ended) {
+              // Before start or ended - tablet layout
+              return Column(
+                children: [
+                  if (isLargeTablet)
+                    _buildTabletTwoColumnLayout(
+                      left: _buildBiddingSessionInfo(),
+                      right: _buildTestControls(),
+                    )
+                  else
+                    Column(
                       children: [
                         _buildBiddingSessionInfo(),
-                        const SizedBox(height: 20),
-                        // Show test buttons for demo
+                        const SizedBox(height: 24),
                         _buildTestControls(),
-                        const SizedBox(height: 20),
                       ],
-                    );
-                  } else if (status == AuctionStatus.active) {
-                    // During auction - show all components
-                    return Column(
-                      children: [
-                        // Search Bar
-                        _buildSearchBar(),
-                        const SizedBox(height: 20),
+                    ),
+                  const SizedBox(height: 24),
+                ],
+              );
+            } else if (status == AuctionStatus.active) {
+              // During auction - tablet layout
+              return Column(
+                children: [
+                  // Search Bar - Tablet optimized
+                  _buildTabletSearchBar(screenWidth),
+                  const SizedBox(height: 24),
 
-                        // Categories Section
-                        _buildCategoriesSection(),
-                        const SizedBox(height: 20),
+                  // Categories Section - Tablet optimized
+                  _buildTabletCategoriesSection(screenWidth),
+                  const SizedBox(height: 24),
 
-                        // Featured Auctions Section
-                        _buildFeaturedAuctionsSection(),
-                        const SizedBox(height: 20),
+                  // Featured Auctions Section - Tablet grid
+                  _buildTabletFeaturedAuctionsSection(screenWidth),
+                  const SizedBox(height: 24),
 
-                        // Live Auction Banner
-                        _buildLiveAuctionBanner(),
-                        const SizedBox(height: 20),
+                  // Live Auction Banner - Tablet optimized
+                  _buildTabletLiveAuctionBanner(screenWidth),
+                  const SizedBox(height: 24),
 
-                        // Show test buttons for demo
-                        _buildTestControls(),
-                        const SizedBox(height: 16),
-                      ],
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }),
-              ],
+                  // Test controls
+                  _buildTestControls(),
+                  const SizedBox(height: 20),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  double _getTabletPadding(double screenWidth) {
+    if (screenWidth >= 1194) return 32.0; // 14" tablets
+    if (screenWidth >= 1112) return 28.0; // 13" tablets
+    if (screenWidth >= 1024) return 24.0; // 12" tablets
+    if (screenWidth >= 834) return 20.0; // 11" tablets
+    return 16.0; // 10" tablets
+  }
+
+  Widget _buildTabletLogo(double screenWidth) {
+    final logoHeight = _getTabletLogoHeight(screenWidth);
+    final containerPadding = _getTabletLogoPadding(screenWidth);
+
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(
+        horizontal: screenWidth >= 1024 ? 24 : 16,
+        vertical: screenWidth >= 1024 ? 12 : 8,
+      ),
+      padding: EdgeInsets.all(containerPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 20 : 16),
+        border: Border.all(
+          color: const Color(0xFFFE8000).withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFE8000).withValues(alpha: 0.08),
+            blurRadius: screenWidth >= 1024 ? 16 : 12,
+            offset: Offset(0, screenWidth >= 1024 ? 6 : 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: screenWidth >= 1024 ? 12 : 8,
+            offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
+          ),
+        ],
+      ),
+      child: SizedBox(
+        height: logoHeight,
+        child: Image.asset(
+          'assets/images/logo/001.png',
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.account_balance,
+              size: logoHeight * 0.75,
+              color: const Color(0xFFFE8000),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  double _getTabletLogoHeight(double screenWidth) {
+    if (screenWidth >= 1194) return 120.0; // 14" tablets
+    if (screenWidth >= 1112) return 110.0; // 13" tablets
+    if (screenWidth >= 1024) return 100.0; // 12" tablets
+    if (screenWidth >= 834) return 90.0; // 11" tablets
+    return 80.0; // 10" tablets
+  }
+
+  double _getTabletLogoPadding(double screenWidth) {
+    if (screenWidth >= 1194) return 28.0; // 14" tablets
+    if (screenWidth >= 1112) return 26.0; // 13" tablets
+    if (screenWidth >= 1024) return 24.0; // 12" tablets
+    if (screenWidth >= 834) return 22.0; // 11" tablets
+    return 20.0; // 10" tablets
+  }
+
+  Widget _buildTabletTwoColumnLayout({
+    required Widget left,
+    required Widget right,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(flex: 3, child: left),
+        const SizedBox(width: 24),
+        Expanded(flex: 2, child: right),
+      ],
+    );
+  }
+
+  Widget _buildTabletSearchBar(double screenWidth) {
+    final searchHeight = screenWidth >= 1024 ? 60.0 : 56.0;
+    final borderRadius = screenWidth >= 1024 ? 30.0 : 28.0;
+    final iconSize = screenWidth >= 1024 ? 26.0 : 24.0;
+    final fontSize = screenWidth >= 1024 ? 17.0 : 16.0;
+
+    return Container(
+      height: searchHeight,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: const Color(0xFFFE8000).withValues(alpha: 0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+            blurRadius: screenWidth >= 1024 ? 12 : 8,
+            offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          SizedBox(width: screenWidth >= 1024 ? 24 : 20),
+          Icon(Icons.search, color: const Color(0xFFFE8000), size: iconSize),
+          SizedBox(width: screenWidth >= 1024 ? 16 : 14),
+          Expanded(
+            child: TextField(
+              onChanged: controller.updateSearchQuery,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade800,
+              ),
+              decoration: InputDecoration(
+                hintText: "Search auctions...",
+                hintStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.shade500,
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: screenWidth >= 1024 ? 18 : 16,
+                ),
+              ),
             ),
+          ),
+          Container(
+            margin: EdgeInsets.only(right: screenWidth >= 1024 ? 8 : 6),
+            padding: EdgeInsets.all(screenWidth >= 1024 ? 12 : 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFE8000),
+              borderRadius: BorderRadius.circular(
+                screenWidth >= 1024 ? 24 : 22,
+              ),
+            ),
+            child: Icon(
+              Icons.tune,
+              color: Colors.white,
+              size: screenWidth >= 1024 ? 22 : 20,
+            ),
+          ),
+          SizedBox(width: screenWidth >= 1024 ? 8 : 6),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletCategoriesSection(double screenWidth) {
+    final titleFontSize = screenWidth >= 1024 ? 24.0 : 22.0;
+    final viewAllFontSize = screenWidth >= 1024 ? 16.0 : 15.0;
+    final chipHeight = screenWidth >= 1024 ? 48.0 : 44.0;
+    final chipSpacing = screenWidth >= 1024 ? 16.0 : 14.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Categories",
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: titleFontSize,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            GestureDetector(
+              onTap: controller.onViewAllTap,
+              child: Text(
+                "View All",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: viewAllFontSize,
+                  color: const Color(0xFFFE8000),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: screenWidth >= 1024 ? 16 : 14),
+        SizedBox(
+          height: chipHeight,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.categories.length,
+            itemBuilder: (context, index) {
+              final category = controller.categories[index];
+              return Padding(
+                padding: EdgeInsets.only(right: chipSpacing),
+                child: Obx(() {
+                  final isSelected =
+                      controller.selectedCategory.value == category;
+                  return _buildTabletCategoryChip(
+                    category,
+                    isSelected,
+                    screenWidth,
+                  );
+                }),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletCategoryChip(
+    String category,
+    bool isSelected,
+    double screenWidth,
+  ) {
+    final fontSize = screenWidth >= 1024 ? 16.0 : 15.0;
+    final horizontalPadding = screenWidth >= 1024 ? 20.0 : 18.0;
+    final verticalPadding = screenWidth >= 1024 ? 12.0 : 10.0;
+
+    return GestureDetector(
+      onTap: () => controller.selectCategory(category),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFE8000) : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 24 : 22),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFFE8000) : Colors.grey.shade400,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFFE8000).withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          category,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: fontSize,
+            color: isSelected ? Colors.white : Colors.grey.shade700,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTabletFeaturedAuctionsSection(double screenWidth) {
+    final titleFontSize = screenWidth >= 1024 ? 24.0 : 22.0;
+    final viewAllFontSize = screenWidth >= 1024 ? 16.0 : 15.0;
+    final crossAxisCount = _getTabletGridCrossAxisCount(screenWidth);
+    final childAspectRatio = _getTabletGridAspectRatio(screenWidth);
+    final crossAxisSpacing = screenWidth >= 1024 ? 16.0 : 14.0;
+    final mainAxisSpacing = screenWidth >= 1024 ? 16.0 : 14.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Featured Auctions",
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: titleFontSize,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            GestureDetector(
+              onTap: controller.onViewAllTap,
+              child: Text(
+                "View All",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: viewAllFontSize,
+                  color: const Color(0xFFFE8000),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: screenWidth >= 1024 ? 16 : 14),
+        Obx(() {
+          final selectedCategory = controller.selectedCategory.value;
+          final items = selectedCategory == 'All'
+              ? controller.auctionItems
+              : controller.auctionItems
+                    .where((item) => item['category'] == selectedCategory)
+                    .toList();
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: crossAxisSpacing,
+              mainAxisSpacing: mainAxisSpacing,
+              childAspectRatio: childAspectRatio,
+            ),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return _buildTabletAuctionCard(item, screenWidth);
+            },
+          );
+        }),
+      ],
+    );
+  }
+
+  int _getTabletGridCrossAxisCount(double screenWidth) {
+    if (screenWidth >= 1194) return 4; // 14" tablets - 4 columns
+    if (screenWidth >= 1112) return 4; // 13" tablets - 4 columns
+    if (screenWidth >= 1024) return 3; // 12" tablets - 3 columns
+    if (screenWidth >= 834) return 3; // 11" tablets - 3 columns
+    return 2; // 10" tablets - 2 columns
+  }
+
+  double _getTabletGridAspectRatio(double screenWidth) {
+    if (screenWidth >= 1194) return 0.9; // 14" tablets
+    if (screenWidth >= 1112) return 0.88; // 13" tablets
+    if (screenWidth >= 1024) return 0.85; // 12" tablets
+    if (screenWidth >= 834) return 0.82; // 11" tablets
+    return 0.8; // 10" tablets
+  }
+
+  Widget _buildTabletAuctionCard(
+    Map<String, dynamic> item,
+    double screenWidth,
+  ) {
+    final cardPadding = screenWidth >= 1024 ? 16.0 : 14.0;
+    final borderRadius = screenWidth >= 1024 ? 16.0 : 14.0;
+    final titleFontSize = screenWidth >= 1024 ? 16.0 : 15.0;
+    final priceFontSize = screenWidth >= 1024 ? 18.0 : 17.0;
+    final detailFontSize = screenWidth >= 1024 ? 13.0 : 12.0;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: const Color(0xFFFE8000).withValues(alpha: 0.15),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFE8000).withValues(alpha: 0.08),
+            blurRadius: screenWidth >= 1024 ? 12 : 8,
+            offset: Offset(0, screenWidth >= 1024 ? 4 : 3),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: screenWidth >= 1024 ? 8 : 6,
+            offset: Offset(0, screenWidth >= 1024 ? 2 : 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image section
+          Container(
+            height: screenWidth >= 1024 ? 140 : 120,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(borderRadius),
+                topRight: Radius.circular(borderRadius),
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.image,
+                size: screenWidth >= 1024 ? 48 : 40,
+                color: Colors.grey.shade400,
+              ),
+            ),
+          ),
+
+          // Content section
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(cardPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['title'] ?? 'Auction Item',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: titleFontSize,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade800,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: screenWidth >= 1024 ? 8 : 6),
+                  Text(
+                    item['price'] ?? 'RM 0',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: priceFontSize,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFFE8000),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    item['category'] ?? 'Category',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: detailFontSize,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLiveAuctionBanner(double screenWidth) {
+    final bannerPadding = screenWidth >= 1024 ? 28.0 : 24.0;
+    final borderRadius = screenWidth >= 1024 ? 20.0 : 18.0;
+    final titleFontSize = screenWidth >= 1024 ? 28.0 : 26.0;
+    final subtitleFontSize = screenWidth >= 1024 ? 18.0 : 17.0;
+    final buttonFontSize = screenWidth >= 1024 ? 18.0 : 17.0;
+    final iconSize = screenWidth >= 1024 ? 32.0 : 28.0;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(bannerPadding),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFFE8000),
+            const Color(0xFFFE8000).withValues(alpha: 0.9),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFE8000).withValues(alpha: 0.4),
+            blurRadius: screenWidth >= 1024 ? 20 : 16,
+            offset: Offset(0, screenWidth >= 1024 ? 8 : 6),
+          ),
+        ],
+      ),
+      child: screenWidth >= 1024
+          ? Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Icon(
+                              Icons.live_tv,
+                              color: Colors.white,
+                              size: iconSize,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            "LIVE AUCTION",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: titleFontSize,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Join the excitement! Bid on premium gold items now.",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: subtitleFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: controller.onJoinLiveAuctionTap,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFFFE8000),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 8,
+                    ),
+                    child: Text(
+                      "Join Now",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: buttonFontSize,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.live_tv,
+                        color: Colors.white,
+                        size: iconSize,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      "LIVE AUCTION",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: titleFontSize,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Join the excitement! Bid on premium gold items now.",
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: subtitleFontSize,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: controller.onJoinLiveAuctionTap,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFFFE8000),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 8,
+                    ),
+                    child: Text(
+                      "Join Now",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: buttonFontSize,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
