@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/register_controller.dart';
-import '../utils/responsive_padding.dart';
 
 class RegisterView extends GetView<RegisterController> {
   const RegisterView({super.key});
@@ -44,121 +43,121 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildMobileLayout() {
-    return Padding(
-      padding: const EdgeInsets.all(ResponsivePadding.mobile),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 8),
-
-          // Logo Image Section - Full Width (Mobile Only) - Same as Home Page
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: const Color(0xFFFE8000).withValues(alpha: 0.2),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFFE8000).withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+    return Column(
+      children: [
+        // Sticky Logo Header
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.only(top: 40, bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Container(
+                height: 80,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Image.asset(
+                  'assets/images/logo/001.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 80,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.account_balance,
+                        size: 48,
+                        color: const Color(0xFFFE8000),
+                      ),
+                    );
+                  },
                 ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: SizedBox(
-              height: 70,
-              child: Image.asset(
-                'assets/images/logo/001.png',
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.account_balance,
-                    size: 50,
-                    color: const Color(0xFFFE8000),
-                  );
-                },
               ),
             ),
           ),
+        ),
 
-          const SizedBox(height: 10),
+        // Scrollable Content
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Compact Welcome Text
+                  Text(
+                    "Create Account",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
 
-          // Welcome Text
-          Text(
-            "Create Account",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade800,
-            ),
-            textAlign: TextAlign.center,
-          ),
+                  const SizedBox(height: 4),
 
-          const SizedBox(height: 4),
+                  Text(
+                    "Join us today",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
 
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Join Ar-Rahnu Auction today",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey.shade600,
-                height: 1.2,
+                  const SizedBox(height: 24),
+
+                  // Compact Register Form
+                  _buildCompactRegisterForm(),
+
+                  const SizedBox(height: 16),
+
+                  // Compact Register Button
+                  _buildCompactRegisterButton(),
+
+                  const SizedBox(height: 12),
+
+                  // Compact Terms Section
+                  _buildCompactTermsSection(),
+
+                  const SizedBox(height: 16),
+
+                  // Compact Sign In Link
+                  _buildCompactSignInLink(),
+
+                  const SizedBox(height: 20),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
           ),
-
-          const SizedBox(height: 14),
-
-          // Register Form
-          _buildRegisterForm(),
-
-          const SizedBox(height: 10),
-
-          // Terms and Conditions
-          _buildTermsSection(),
-
-          const SizedBox(height: 14),
-
-          // Register Button
-          _buildRegisterButton(),
-
-          const SizedBox(height: 14),
-
-          // Sign In Link
-          _buildSignInLink(),
-
-          const SizedBox(height: 8),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildTabletLayout(BuildContext context, double screenWidth) {
-    final tabletPadding = ResponsivePadding.getTabletPadding(screenWidth);
-
     return Padding(
-      padding: EdgeInsets.all(tabletPadding),
+      padding: const EdgeInsets.all(
+        8,
+      ), // Reduced from responsive padding to match home page
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: ResponsivePadding.getTopSpacing(screenWidth)),
-
+          SizedBox(
+            height: screenWidth >= 1024 ? 10 : 8,
+          ), // Reduced top spacing to match home page
           // Logo Image Section - 50% Width for Tablets
           _buildTabletLogo(screenWidth),
 
@@ -221,224 +220,157 @@ class RegisterView extends GetView<RegisterController> {
     );
   }
 
-  Widget _buildRegisterForm() {
+  Widget _buildCompactRegisterForm() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Full Name Field
-        Text(
-          "Full Name",
-          style: TextStyle(
+        // Compact Full Name Field
+        TextFormField(
+          controller: controller.nameController,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
             fontSize: 13,
+            fontWeight: FontWeight.w400,
           ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 6,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: TextFormField(
-            controller: controller.nameController,
-            style: const TextStyle(
+          decoration: InputDecoration(
+            hintText: "Full name",
+            hintStyle: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14,
+              color: Colors.grey.shade500,
               fontWeight: FontWeight.w400,
+              fontSize: 13,
             ),
-            decoration: InputDecoration(
-              hintText: "Enter your full name",
-              hintStyle: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
+            prefixIcon: Icon(
+              Icons.person_outline,
+              color: const Color(0xFFFE8000),
+              size: 18,
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: Color(0xFFFE8000),
+                width: 1.5,
               ),
-              prefixIcon: Icon(
-                Icons.person_outline,
-                color: Colors.grey.shade600,
-                size: 20,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 2,
-                ),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
             ),
           ),
         ),
 
         const SizedBox(height: 12),
 
-        // Email Field
-        Text(
-          "Email Address",
-          style: TextStyle(
+        // Compact Email Field
+        TextFormField(
+          controller: controller.emailController,
+          keyboardType: TextInputType.emailAddress,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
             fontSize: 13,
+            fontWeight: FontWeight.w400,
           ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 6,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: TextFormField(
-            controller: controller.emailController,
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(
+          decoration: InputDecoration(
+            hintText: "Email address",
+            hintStyle: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14,
+              color: Colors.grey.shade500,
               fontWeight: FontWeight.w400,
+              fontSize: 13,
             ),
-            decoration: InputDecoration(
-              hintText: "Enter your email",
-              hintStyle: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
+            prefixIcon: Icon(
+              Icons.email_outlined,
+              color: const Color(0xFFFE8000),
+              size: 18,
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: Color(0xFFFE8000),
+                width: 1.5,
               ),
-              prefixIcon: Icon(
-                Icons.email_outlined,
-                color: Colors.grey.shade600,
-                size: 20,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 2,
-                ),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
             ),
           ),
         ),
 
         const SizedBox(height: 12),
 
-        // Password Field
-        Text(
-          "Password",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-            fontSize: 13,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 6,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: Obx(
-            () => TextFormField(
-              controller: controller.passwordController,
-              obscureText: !controller.isPasswordVisible.value,
-              style: const TextStyle(
+        // Compact Password Field
+        Obx(
+          () => TextFormField(
+            controller: controller.passwordController,
+            obscureText: !controller.isPasswordVisible.value,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              hintText: "Password",
+              hintStyle: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 14,
+                color: Colors.grey.shade500,
                 fontWeight: FontWeight.w400,
+                fontSize: 13,
               ),
-              decoration: InputDecoration(
-                hintText: "Create a password",
-                hintStyle: TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: Colors.grey.shade500,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                prefixIcon: Icon(
-                  Icons.lock_outline,
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: const Color(0xFFFE8000),
+                size: 18,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.isPasswordVisible.value
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
                   color: Colors.grey.shade600,
-                  size: 20,
+                  size: 18,
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    controller.isPasswordVisible.value
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  onPressed: controller.togglePasswordVisibility,
+                onPressed: controller.togglePasswordVisibility,
+              ),
+              filled: true,
+              fillColor: Colors.grey.shade50,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: Color(0xFFFE8000),
+                  width: 1.5,
                 ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFFE8000),
-                    width: 2,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
             ),
           ),
@@ -447,147 +379,123 @@ class RegisterView extends GetView<RegisterController> {
     );
   }
 
-  Widget _buildTermsSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Obx(
-            () => Transform.scale(
-              scale: 0.9,
-              child: Checkbox(
-                value: controller.agreeToTerms.value,
-                onChanged: controller.toggleAgreeToTerms,
-                activeColor: const Color(0xFFFE8000),
-                checkColor: Colors.white,
-                side: BorderSide(color: Colors.grey.shade400, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: VisualDensity.compact,
+  Widget _buildCompactTermsSection() {
+    return Row(
+      children: [
+        Obx(
+          () => Transform.scale(
+            scale: 0.8,
+            child: Checkbox(
+              value: controller.agreeToTerms.value,
+              onChanged: controller.toggleAgreeToTerms,
+              activeColor: const Color(0xFFFE8000),
+              checkColor: Colors.white,
+              side: BorderSide(color: Colors.grey.shade400, width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
               ),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
             ),
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Row(
-              children: [
-                Text(
-                  "I agree to the ",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: controller.onTermsAndConditionsTap,
-                  child: const Text(
-                    "Terms & Conditions",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      color: Color(0xFFFE8000),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Color(0xFFFE8000),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRegisterButton() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Obx(
-        () => ElevatedButton(
-          onPressed: controller.isLoading.value
-              ? null
-              : controller.handleRegister,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFE8000),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            elevation: 0,
-          ),
-          child: controller.isLoading.value
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
-                )
-              : const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSignInLink() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Already have an account? ",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade600,
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          GestureDetector(
-            onTap: controller.onSignInTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-              child: const Text(
-                "Sign In",
+        const SizedBox(width: 4),
+        Expanded(
+          child: Wrap(
+            children: [
+              Text(
+                "I agree to the ",
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  color: Color(0xFFFE8000),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Color(0xFFFE8000),
+                  color: Colors.grey.shade600,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
+              GestureDetector(
+                onTap: controller.onTermsAndConditionsTap,
+                child: const Text(
+                  "Terms & Conditions",
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    color: Color(0xFFFE8000),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Color(0xFFFE8000),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactRegisterButton() {
+    return Obx(
+      () => ElevatedButton(
+        onPressed: controller.isLoading.value
+            ? null
+            : controller.handleRegister,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFFE8000),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 2,
+          shadowColor: const Color(0xFFFE8000).withValues(alpha: 0.3),
+        ),
+        child: controller.isLoading.value
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : const Text(
+                "Create Account",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildCompactSignInLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Already have an account? ",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.grey.shade600,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        GestureDetector(
+          onTap: controller.onSignInTap,
+          child: const Text(
+            "Sign In",
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              color: Color(0xFFFE8000),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              decoration: TextDecoration.underline,
+              decorationColor: Color(0xFFFE8000),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -610,43 +518,38 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildTabletLogo(double screenWidth) {
-    final logoSize = _getTabletLogoSize(screenWidth);
+    final logoHeight = _getTabletLogoHeight(screenWidth);
 
-    return Center(
-      child: Container(
-        width: screenWidth * 0.5, // 50% width for tablets
-        margin: ResponsivePadding.getLogoContainerMargin(screenWidth),
-        padding: const EdgeInsets.all(ResponsivePadding.logoContainerPadding),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.2),
-            width: 1,
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(
+        horizontal: screenWidth >= 1024 ? 24 : 20,
+        vertical: screenWidth >= 1024 ? 12 : 10,
+      ),
+      child: Center(
+        child: Container(
+          height: logoHeight,
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth >= 1024 ? 32 : 24,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFE8000).withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: SizedBox(
-          height: logoSize,
           child: Image.asset(
             'assets/images/logo/001.png',
             fit: BoxFit.contain,
             errorBuilder: (context, error, stackTrace) {
-              return Icon(
-                Icons.account_balance,
-                size: logoSize * 0.75,
-                color: const Color(0xFFFE8000),
+              return Container(
+                height: logoHeight,
+                padding: EdgeInsets.all(screenWidth >= 1024 ? 20 : 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(
+                    screenWidth >= 1024 ? 16 : 12,
+                  ),
+                ),
+                child: Icon(
+                  Icons.account_balance,
+                  size: logoHeight * 0.6,
+                  color: const Color(0xFFFE8000),
+                ),
               );
             },
           ),
@@ -655,12 +558,14 @@ class RegisterView extends GetView<RegisterController> {
     );
   }
 
-  double _getTabletLogoSize(double screenWidth) {
-    if (screenWidth >= 1194) return 55.0; // 14" tablets
-    if (screenWidth >= 1112) return 52.0; // 13" tablets
-    if (screenWidth >= 1024) return 50.0; // 12" tablets
-    if (screenWidth >= 834) return 48.0; // 11" tablets
-    return 45.0; // 10" tablets
+  double _getTabletLogoHeight(double screenWidth) {
+    if (screenWidth >= 1194) {
+      return 100.0; // 14" tablets - Optimized for card-less design
+    }
+    if (screenWidth >= 1112) return 95.0; // 13" tablets
+    if (screenWidth >= 1024) return 90.0; // 12" tablets
+    if (screenWidth >= 834) return 85.0; // 11" tablets
+    return 80.0; // 10" tablets
   }
 
   Widget _buildTabletRegisterForm(double screenWidth) {
@@ -736,8 +641,8 @@ class RegisterView extends GetView<RegisterController> {
                 ),
               ),
               contentPadding: EdgeInsets.symmetric(
-                horizontal: screenWidth >= 1024 ? 20 : 16,
-                vertical: screenWidth >= 1024 ? 18 : 16,
+                horizontal: screenWidth >= 1024 ? 24 : 20,
+                vertical: screenWidth >= 1024 ? 22 : 20,
               ),
             ),
           ),
@@ -809,8 +714,8 @@ class RegisterView extends GetView<RegisterController> {
                 ),
               ),
               contentPadding: EdgeInsets.symmetric(
-                horizontal: screenWidth >= 1024 ? 20 : 16,
-                vertical: screenWidth >= 1024 ? 18 : 16,
+                horizontal: screenWidth >= 1024 ? 24 : 20,
+                vertical: screenWidth >= 1024 ? 22 : 20,
               ),
             ),
           ),
@@ -894,8 +799,8 @@ class RegisterView extends GetView<RegisterController> {
                   ),
                 ),
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: screenWidth >= 1024 ? 20 : 16,
-                  vertical: screenWidth >= 1024 ? 18 : 16,
+                  horizontal: screenWidth >= 1024 ? 24 : 20,
+                  vertical: screenWidth >= 1024 ? 22 : 20,
                 ),
               ),
             ),
