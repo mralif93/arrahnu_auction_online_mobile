@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/register_controller.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_typography.dart';
+import '../utils/app_theme.dart';
+import '../utils/responsive_padding.dart';
 
 class RegisterView extends GetView<RegisterController> {
   const RegisterView({super.key});
@@ -8,7 +12,7 @@ class RegisterView extends GetView<RegisterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -48,31 +52,32 @@ class RegisterView extends GetView<RegisterController> {
         // Sticky Logo Header
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.only(top: 40, bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+          padding: EdgeInsets.only(
+            top: ResponsivePadding.largeSpacing * 2,
+            bottom: ResponsivePadding.smallSpacing
           ),
+          decoration: BoxDecoration(color: AppColors.background),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: AppTheme.getPadding(horizontal: 16),
             child: Center(
               child: Container(
                 height: 80,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: AppTheme.getPadding(horizontal: 20),
                 child: Image.asset(
                   'assets/images/logo/001.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 80,
-                      padding: const EdgeInsets.all(16),
+                      padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFE8000).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: AppTheme.mediumRadius,
                       ),
                       child: Icon(
                         Icons.account_balance,
                         size: 48,
-                        color: const Color(0xFFFE8000),
+                        color: AppColors.primary,
                       ),
                     );
                   },
@@ -85,7 +90,7 @@ class RegisterView extends GetView<RegisterController> {
         // Scrollable Content
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: AppTheme.getPadding(horizontal: 24, vertical: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -95,49 +100,43 @@ class RegisterView extends GetView<RegisterController> {
                   // Compact Welcome Text
                   Text(
                     "Create Account",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade800,
+                    style: AppTypography.titleLarge.copyWith(
+                      color: AppColors.textPrimary,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 4),
+                  SizedBox(height: ResponsivePadding.smallSpacing / 2),
 
                   Text(
                     "Join us today",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: ResponsivePadding.sectionSpacing),
 
                   // Compact Register Form
                   _buildCompactRegisterForm(),
 
-                  const SizedBox(height: 16),
-
-                  // Compact Register Button
-                  _buildCompactRegisterButton(),
-
-                  const SizedBox(height: 12),
+                  SizedBox(height: ResponsivePadding.smallSpacing),
 
                   // Compact Terms Section
                   _buildCompactTermsSection(),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: ResponsivePadding.smallSpacing),
+
+                  // Compact Register Button
+                  _buildCompactRegisterButton(),
+
+                  SizedBox(height: ResponsivePadding.smallSpacing),
 
                   // Compact Sign In Link
                   _buildCompactSignInLink(),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: ResponsivePadding.largeSpacing),
                 ],
               ),
             ),
@@ -166,11 +165,8 @@ class RegisterView extends GetView<RegisterController> {
           // Welcome Text - Tablet optimized
           Text(
             "Create Account",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: _getTabletTitleFontSize(screenWidth),
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade800,
+            style: _getTabletTitleStyle(screenWidth).copyWith(
+              color: AppColors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -183,11 +179,8 @@ class RegisterView extends GetView<RegisterController> {
             ),
             child: Text(
               "Join Ar-Rahnu Auction today",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: _getTabletSubtitleFontSize(screenWidth),
-                fontWeight: FontWeight.w400,
-                color: Colors.grey.shade600,
+              style: _getTabletSubtitleStyle(screenWidth).copyWith(
+                color: AppColors.textSecondary,
                 height: 1.2,
               ),
               textAlign: TextAlign.center,
@@ -223,159 +216,255 @@ class RegisterView extends GetView<RegisterController> {
   Widget _buildCompactRegisterForm() {
     return Column(
       children: [
-        // Compact Full Name Field
-        TextFormField(
-          controller: controller.nameController,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
-            hintText: "Full name",
-            hintStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
-            ),
-            prefixIcon: Icon(
-              Icons.person_outline,
-              color: const Color(0xFFFE8000),
-              size: 18,
-            ),
-            filled: true,
-            fillColor: Colors.grey.shade50,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Color(0xFFFE8000),
-                width: 1.5,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-          ),
-        ),
-
+        // Personal Information Section
+        _buildSectionHeader("Personal Information", Icons.person_outline),
         const SizedBox(height: 12),
 
-        // Compact Email Field
-        TextFormField(
+        // Full Name Field
+        _buildCompactTextField(
+          controller: controller.fullNameController,
+          hintText: "Full Name",
+          icon: Icons.person_outline,
+          keyboardType: TextInputType.name,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // IC Number Field
+        _buildCompactTextField(
+          controller: controller.icNumberController,
+          hintText: "Identification Card Number",
+          icon: Icons.credit_card_outlined,
+          keyboardType: TextInputType.text,
+        ),
+
+        SizedBox(height: ResponsivePadding.sectionSpacing),
+
+        // Contact Information Section
+        _buildSectionHeader(
+          "Contact Information",
+          Icons.contact_phone_outlined,
+        ),
+        const SizedBox(height: 12),
+
+        // Email Field
+        _buildCompactTextField(
           controller: controller.emailController,
+          hintText: "Email Address",
+          icon: Icons.email_outlined,
           keyboardType: TextInputType.emailAddress,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
-            hintText: "Email address",
-            hintStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
-            ),
-            prefixIcon: Icon(
-              Icons.email_outlined,
-              color: const Color(0xFFFE8000),
-              size: 18,
-            ),
-            filled: true,
-            fillColor: Colors.grey.shade50,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Color(0xFFFE8000),
-                width: 1.5,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Phone Number Field
+        _buildCompactTextField(
+          controller: controller.phoneController,
+          hintText: "Phone Number",
+          icon: Icons.phone_outlined,
+          keyboardType: TextInputType.phone,
+        ),
+
+        SizedBox(height: ResponsivePadding.sectionSpacing),
+
+        // Address Information Section
+        _buildSectionHeader("Address Information", Icons.location_on_outlined),
+        const SizedBox(height: 12),
+
+        // Address Line 1
+        _buildCompactTextField(
+          controller: controller.address1Controller,
+          hintText: "Address Line 1",
+          icon: Icons.home_outlined,
+          keyboardType: TextInputType.streetAddress,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Address Line 2
+        _buildCompactTextField(
+          controller: controller.address2Controller,
+          hintText: "Address Line 2 (Optional)",
+          icon: Icons.home_work_outlined,
+          keyboardType: TextInputType.streetAddress,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Address Line 3
+        _buildCompactTextField(
+          controller: controller.address3Controller,
+          hintText: "Address Line 3 (Optional)",
+          icon: Icons.apartment_outlined,
+          keyboardType: TextInputType.streetAddress,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Postcode and City Row
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactTextField(
+                controller: controller.postcodeController,
+                hintText: "Postcode",
+                icon: Icons.markunread_mailbox_outlined,
+                keyboardType: TextInputType.number,
               ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
+            SizedBox(width: ResponsivePadding.formFieldSpacing),
+            Expanded(
+              child: _buildCompactTextField(
+                controller: controller.cityController,
+                hintText: "City",
+                icon: Icons.location_city_outlined,
+                keyboardType: TextInputType.text,
+              ),
             ),
+          ],
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // State and Country Row
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactTextField(
+                controller: controller.stateController,
+                hintText: "State",
+                icon: Icons.map_outlined,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+            SizedBox(width: ResponsivePadding.formFieldSpacing),
+            Expanded(
+              child: _buildCompactTextField(
+                controller: controller.countryController,
+                hintText: "Country",
+                icon: Icons.public_outlined,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(height: ResponsivePadding.sectionSpacing),
+
+        // Security Information Section
+        _buildSectionHeader("Security Information", Icons.security_outlined),
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Password Field
+        Obx(
+          () => _buildCompactPasswordField(
+            controller: controller.passwordController,
+            hintText: "Password",
+            isVisible: controller.isPasswordVisible.value,
+            onToggleVisibility: controller.togglePasswordVisibility,
           ),
         ),
 
-        const SizedBox(height: 12),
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
 
-        // Compact Password Field
+        // Confirm Password Field
         Obx(
-          () => TextFormField(
-            controller: controller.passwordController,
-            obscureText: !controller.isPasswordVisible.value,
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-            ),
-            decoration: InputDecoration(
-              hintText: "Password",
-              hintStyle: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w400,
-                fontSize: 13,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outline,
-                color: const Color(0xFFFE8000),
-                size: 18,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  controller.isPasswordVisible.value
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: Colors.grey.shade600,
-                  size: 18,
-                ),
-                onPressed: controller.togglePasswordVisibility,
-              ),
-              filled: true,
-              fillColor: Colors.grey.shade50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 1.5,
-                ),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
-            ),
+          () => _buildCompactPasswordField(
+            controller: controller.confirmPasswordController,
+            hintText: "Confirm Password",
+            isVisible: controller.isConfirmPasswordVisible.value,
+            onToggleVisibility: controller.toggleConfirmPasswordVisibility,
           ),
         ),
       ],
+    );
+  }
+
+  // Helper method to build section headers
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Container(
+      padding: AppTheme.getPadding(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.08),
+        borderRadius: AppTheme.smallRadius,
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: AppColors.primary),
+          SizedBox(width: ResponsivePadding.smallSpacing),
+          Text(
+            title,
+            style: AppTypography.labelMedium.copyWith(
+              fontWeight: AppTypography.semiBold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build compact text fields
+  Widget _buildCompactTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    required TextInputType keyboardType,
+  }) {
+    return Container(
+      height: 48, // Fixed height for consistency
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: AppTypography.bodyMedium,
+        decoration: AppTheme.inputDecoration.copyWith(
+          hintText: hintText,
+          hintStyle: AppTypography.bodyMedium.copyWith(
+            color: AppColors.textLight,
+          ),
+          prefixIcon: Icon(icon, color: AppColors.primary, size: 18),
+          isDense: true, // Makes the field more compact
+        ),
+      ),
+    );
+  }
+
+  // Helper method to build compact password fields
+  Widget _buildCompactPasswordField({
+    required TextEditingController controller,
+    required String hintText,
+    required bool isVisible,
+    required VoidCallback onToggleVisibility,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: !isVisible,
+      style: AppTypography.bodyMedium,
+      decoration: AppTheme.inputDecoration.copyWith(
+        hintText: hintText,
+        hintStyle: AppTypography.bodyMedium.copyWith(
+          color: AppColors.textLight,
+        ),
+        prefixIcon: Icon(
+          Icons.lock_outline,
+          color: AppColors.primary,
+          size: 18,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isVisible
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
+            color: AppColors.textSecondary,
+            size: 18,
+          ),
+          onPressed: onToggleVisibility,
+        ),
+      ),
     );
   }
 
@@ -388,41 +477,36 @@ class RegisterView extends GetView<RegisterController> {
             child: Checkbox(
               value: controller.agreeToTerms.value,
               onChanged: controller.toggleAgreeToTerms,
-              activeColor: const Color(0xFFFE8000),
-              checkColor: Colors.white,
-              side: BorderSide(color: Colors.grey.shade400, width: 1),
+              activeColor: AppColors.primary,
+              checkColor: AppColors.textWhite,
+              side: BorderSide(color: AppColors.border, width: 1),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: AppTheme.getRadius(4),
               ),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               visualDensity: VisualDensity.compact,
             ),
           ),
         ),
-        const SizedBox(width: 4),
+        SizedBox(width: ResponsivePadding.smallSpacing / 2),
         Expanded(
           child: Wrap(
             children: [
               Text(
                 "I agree to the ",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: Colors.grey.shade600,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
               GestureDetector(
                 onTap: controller.onTermsAndConditionsTap,
-                child: const Text(
+                child: Text(
                   "Terms & Conditions",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Color(0xFFFE8000),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: AppTypography.semiBold,
                     decoration: TextDecoration.underline,
-                    decorationColor: Color(0xFFFE8000),
+                    decorationColor: AppColors.primary,
                   ),
                 ),
               ),
@@ -439,30 +523,27 @@ class RegisterView extends GetView<RegisterController> {
         onPressed: controller.isLoading.value
             ? null
             : controller.handleRegister,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFE8000),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 2,
-          shadowColor: const Color(0xFFFE8000).withValues(alpha: 0.3),
+        style: AppTheme.primaryButtonStyle.copyWith(
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 14),
+          ),
+          elevation: MaterialStateProperty.all(2),
+          shadowColor: MaterialStateProperty.all(
+            AppColors.primary.withOpacity(0.3),
+          ),
         ),
         child: controller.isLoading.value
-            ? const SizedBox(
+            ? SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: AppColors.textWhite,
                   strokeWidth: 2,
                 ),
               )
-            : const Text(
+            : Text(
                 "Create Account",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.buttonText,
               ),
       ),
     );
@@ -474,24 +555,19 @@ class RegisterView extends GetView<RegisterController> {
       children: [
         Text(
           "Already have an account? ",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            color: Colors.grey.shade600,
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
         GestureDetector(
           onTap: controller.onSignInTap,
-          child: const Text(
+          child: Text(
             "Sign In",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Color(0xFFFE8000),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: AppTypography.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: AppTypography.semiBold,
               decoration: TextDecoration.underline,
-              decorationColor: Color(0xFFFE8000),
+              decorationColor: AppColors.primary,
             ),
           ),
         ),
@@ -501,20 +577,20 @@ class RegisterView extends GetView<RegisterController> {
 
   // Tablet responsive helper methods
 
-  double _getTabletTitleFontSize(double screenWidth) {
-    if (screenWidth >= 1194) return 26.0; // 14" tablets
-    if (screenWidth >= 1112) return 24.0; // 13" tablets
-    if (screenWidth >= 1024) return 22.0; // 12" tablets
-    if (screenWidth >= 834) return 21.0; // 11" tablets
-    return 20.0; // 10" tablets
+  TextStyle _getTabletTitleStyle(double screenWidth) {
+    if (screenWidth >= 1194) return AppTypography.headlineLarge; // 14" tablets
+    if (screenWidth >= 1112) return AppTypography.headlineLarge; // 13" tablets
+    if (screenWidth >= 1024) return AppTypography.headlineMedium; // 12" tablets
+    if (screenWidth >= 834) return AppTypography.headlineSmall; // 11" tablets
+    return AppTypography.titleLarge; // 10" tablets
   }
 
-  double _getTabletSubtitleFontSize(double screenWidth) {
-    if (screenWidth >= 1194) return 15.0; // 14" tablets
-    if (screenWidth >= 1112) return 14.0; // 13" tablets
-    if (screenWidth >= 1024) return 13.0; // 12" tablets
-    if (screenWidth >= 834) return 13.0; // 11" tablets
-    return 12.0; // 10" tablets
+  TextStyle _getTabletSubtitleStyle(double screenWidth) {
+    if (screenWidth >= 1194) return AppTypography.titleLarge; // 14" tablets
+    if (screenWidth >= 1112) return AppTypography.titleMedium; // 13" tablets
+    if (screenWidth >= 1024) return AppTypography.titleMedium; // 12" tablets
+    if (screenWidth >= 834) return AppTypography.titleSmall; // 11" tablets
+    return AppTypography.bodyLarge; // 10" tablets
   }
 
   Widget _buildTabletLogo(double screenWidth) {
@@ -522,14 +598,14 @@ class RegisterView extends GetView<RegisterController> {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(
+      margin: AppTheme.getPadding(
         horizontal: screenWidth >= 1024 ? 24 : 20,
         vertical: screenWidth >= 1024 ? 12 : 10,
       ),
       child: Center(
         child: Container(
           height: logoHeight,
-          padding: EdgeInsets.symmetric(
+          padding: AppTheme.getPadding(
             horizontal: screenWidth >= 1024 ? 32 : 24,
           ),
           child: Image.asset(
@@ -538,17 +614,20 @@ class RegisterView extends GetView<RegisterController> {
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 height: logoHeight,
-                padding: EdgeInsets.all(screenWidth >= 1024 ? 20 : 16),
+                padding: AppTheme.getPadding(
+                  horizontal: screenWidth >= 1024 ? 20 : 16,
+                  vertical: screenWidth >= 1024 ? 20 : 16
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFE8000).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: AppTheme.getRadius(
                     screenWidth >= 1024 ? 16 : 12,
                   ),
                 ),
                 child: Icon(
                   Icons.account_balance,
                   size: logoHeight * 0.6,
-                  color: const Color(0xFFFE8000),
+                  color: AppColors.primary,
                 ),
               );
             },
@@ -569,9 +648,10 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildTabletRegisterForm(double screenWidth) {
-    final fieldSpacing = screenWidth >= 1024 ? 20.0 : 18.0;
-    final fontSize = screenWidth >= 1024 ? 18.0 : 16.0;
-    final labelFontSize = screenWidth >= 1024 ? 18.0 : 16.0;
+    final fieldSpacing = screenWidth >= 1024 ? 
+      ResponsivePadding.largeSpacing : 
+      ResponsivePadding.sectionSpacing;
+    final fontSize = screenWidth >= 1024 ? AppTypography.lg : AppTypography.base;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,68 +659,40 @@ class RegisterView extends GetView<RegisterController> {
         // Full Name Field
         Text(
           "Full Name",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-            fontSize: labelFontSize,
+          style: AppTypography.titleMedium.copyWith(
+            fontSize: fontSize,
+            color: AppColors.textPrimary,
           ),
         ),
-        SizedBox(height: screenWidth >= 1024 ? 10 : 8),
+        SizedBox(height: ResponsivePadding.smallSpacing),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 16 : 12),
+            borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: AppColors.shadowColor,
                 blurRadius: screenWidth >= 1024 ? 12 : 8,
                 offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
               ),
             ],
           ),
           child: TextFormField(
-            controller: controller.nameController,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
+            controller: controller.fullNameController,
+            style: AppTypography.bodyLarge.copyWith(
               fontSize: fontSize,
-              fontWeight: FontWeight.w400,
             ),
-            decoration: InputDecoration(
+            decoration: AppTheme.inputDecoration.copyWith(
               hintText: "Enter your full name",
-              hintStyle: TextStyle(
-                color: Colors.grey.shade500,
-                fontFamily: 'Montserrat',
+              hintStyle: AppTypography.bodyLarge.copyWith(
                 fontSize: fontSize,
+                color: AppColors.textLight,
               ),
               prefixIcon: Icon(
                 Icons.person_outline,
-                color: const Color(0xFFFE8000),
+                color: AppColors.primary,
                 size: screenWidth >= 1024 ? 24 : 22,
               ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 2,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: AppTheme.getPadding(
                 horizontal: screenWidth >= 1024 ? 24 : 20,
                 vertical: screenWidth >= 1024 ? 22 : 20,
               ),
@@ -652,20 +704,18 @@ class RegisterView extends GetView<RegisterController> {
         // Email Field
         Text(
           "Email Address",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-            fontSize: labelFontSize,
+          style: AppTypography.titleMedium.copyWith(
+            fontSize: fontSize,
+            color: AppColors.textPrimary,
           ),
         ),
-        SizedBox(height: screenWidth >= 1024 ? 10 : 8),
+        SizedBox(height: ResponsivePadding.smallSpacing),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 16 : 12),
+            borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: AppColors.shadowColor,
                 blurRadius: screenWidth >= 1024 ? 12 : 8,
                 offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
               ),
@@ -673,47 +723,21 @@ class RegisterView extends GetView<RegisterController> {
           ),
           child: TextFormField(
             controller: controller.emailController,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
+            style: AppTypography.bodyLarge.copyWith(
               fontSize: fontSize,
-              fontWeight: FontWeight.w400,
             ),
-            decoration: InputDecoration(
+            decoration: AppTheme.inputDecoration.copyWith(
               hintText: "Enter your email address",
-              hintStyle: TextStyle(
-                color: Colors.grey.shade500,
-                fontFamily: 'Montserrat',
+              hintStyle: AppTypography.bodyLarge.copyWith(
                 fontSize: fontSize,
+                color: AppColors.textLight,
               ),
               prefixIcon: Icon(
                 Icons.email_outlined,
-                color: const Color(0xFFFE8000),
+                color: AppColors.primary,
                 size: screenWidth >= 1024 ? 24 : 22,
               ),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 2,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: AppTheme.getPadding(
                 horizontal: screenWidth >= 1024 ? 24 : 20,
                 vertical: screenWidth >= 1024 ? 22 : 20,
               ),
@@ -725,20 +749,18 @@ class RegisterView extends GetView<RegisterController> {
         // Password Field
         Text(
           "Password",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-            fontSize: labelFontSize,
+          style: AppTypography.titleMedium.copyWith(
+            fontSize: fontSize,
+            color: AppColors.textPrimary,
           ),
         ),
-        SizedBox(height: screenWidth >= 1024 ? 10 : 8),
+        SizedBox(height: ResponsivePadding.smallSpacing),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 16 : 12),
+            borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: AppColors.shadowColor,
                 blurRadius: screenWidth >= 1024 ? 12 : 8,
                 offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
               ),
@@ -748,21 +770,18 @@ class RegisterView extends GetView<RegisterController> {
             () => TextFormField(
               controller: controller.passwordController,
               obscureText: !controller.isPasswordVisible.value,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
+              style: AppTypography.bodyLarge.copyWith(
                 fontSize: fontSize,
-                fontWeight: FontWeight.w400,
               ),
-              decoration: InputDecoration(
+              decoration: AppTheme.inputDecoration.copyWith(
                 hintText: "Create a strong password",
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontFamily: 'Montserrat',
+                hintStyle: AppTypography.bodyLarge.copyWith(
                   fontSize: fontSize,
+                  color: AppColors.textLight,
                 ),
                 prefixIcon: Icon(
                   Icons.lock_outline,
-                  color: const Color(0xFFFE8000),
+                  color: AppColors.primary,
                   size: screenWidth >= 1024 ? 24 : 22,
                 ),
                 suffixIcon: IconButton(
@@ -775,30 +794,7 @@ class RegisterView extends GetView<RegisterController> {
                   ),
                   onPressed: controller.togglePasswordVisibility,
                 ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFFE8000),
-                    width: 2,
-                  ),
-                ),
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: AppTheme.getPadding(
                   horizontal: screenWidth >= 1024 ? 24 : 20,
                   vertical: screenWidth >= 1024 ? 22 : 20,
                 ),
@@ -811,10 +807,12 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildTabletTermsSection(double screenWidth) {
-    final fontSize = screenWidth >= 1024 ? 16.0 : 14.0;
-
     return Container(
-      padding: EdgeInsets.symmetric(vertical: screenWidth >= 1024 ? 6 : 4),
+      padding: AppTheme.getPadding(
+        vertical: screenWidth >= 1024 ? 
+          ResponsivePadding.sectionSpacing : 
+          ResponsivePadding.smallSpacing,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -824,11 +822,11 @@ class RegisterView extends GetView<RegisterController> {
               child: Checkbox(
                 value: controller.agreeToTerms.value,
                 onChanged: controller.toggleAgreeToTerms,
-                activeColor: const Color(0xFFFE8000),
-                checkColor: Colors.white,
-                side: BorderSide(color: Colors.grey.shade400, width: 2),
+                activeColor: AppColors.primary,
+                checkColor: AppColors.textWhite,
+                side: BorderSide(color: AppColors.border, width: 2),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
+                  borderRadius: AppTheme.getRadius(
                     screenWidth >= 1024 ? 10 : 8,
                   ),
                 ),
@@ -837,30 +835,25 @@ class RegisterView extends GetView<RegisterController> {
               ),
             ),
           ),
-          SizedBox(width: screenWidth >= 1024 ? 10 : 8),
+          SizedBox(width: ResponsivePadding.smallSpacing),
           Expanded(
             child: Wrap(
               children: [
                 Text(
                   "I agree to the ",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.grey.shade700,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w400,
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.textSecondary,
                   ),
                 ),
                 GestureDetector(
                   onTap: controller.onTermsAndConditionsTap,
                   child: Text(
                     "Terms & Conditions",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      color: const Color(0xFFFE8000),
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
+                    style: AppTypography.bodyLarge.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: AppTypography.semiBold,
                       decoration: TextDecoration.underline,
-                      decorationColor: const Color(0xFFFE8000),
+                      decorationColor: AppColors.primary,
                     ),
                   ),
                 ),
@@ -874,17 +867,15 @@ class RegisterView extends GetView<RegisterController> {
 
   Widget _buildTabletRegisterButton(double screenWidth) {
     final buttonHeight = screenWidth >= 1024 ? 56.0 : 52.0;
-    final fontSize = screenWidth >= 1024 ? 20.0 : 18.0;
-    final borderRadius = screenWidth >= 1024 ? 16.0 : 12.0;
 
     return Container(
       width: double.infinity,
       height: buttonHeight,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: screenWidth >= 1024 ? 16 : 12,
             offset: Offset(0, screenWidth >= 1024 ? 6 : 4),
           ),
@@ -895,30 +886,34 @@ class RegisterView extends GetView<RegisterController> {
           onPressed: controller.isLoading.value
               ? null
               : controller.handleRegister,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFE8000),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+          style: AppTheme.primaryButtonStyle.copyWith(
+            padding: MaterialStateProperty.all(
+              AppTheme.getPadding(
+                vertical: screenWidth >= 1024 ? 18 : 16,
+              ),
             ),
-            elevation: 0,
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: AppTheme.getRadius(
+                  screenWidth >= 1024 ? 16 : 12,
+                ),
+              ),
+            ),
           ),
           child: controller.isLoading.value
               ? SizedBox(
                   width: screenWidth >= 1024 ? 26 : 22,
                   height: screenWidth >= 1024 ? 26 : 22,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
+                  child: CircularProgressIndicator(
+                    color: AppColors.textWhite,
                     strokeWidth: 2.5,
                   ),
                 )
               : Text(
                   "Create Account",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: screenWidth >= 1024 
+                    ? AppTypography.headlineSmall 
+                    : AppTypography.titleLarge,
                 ),
         ),
       ),
@@ -926,38 +921,39 @@ class RegisterView extends GetView<RegisterController> {
   }
 
   Widget _buildTabletSignInLink(double screenWidth) {
-    final fontSize = screenWidth >= 1024 ? 18.0 : 16.0;
+    final textStyle = screenWidth >= 1024 
+        ? AppTypography.titleMedium 
+        : AppTypography.titleSmall;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: screenWidth >= 1024 ? 10 : 8),
+      padding: AppTheme.getPadding(
+        vertical: screenWidth >= 1024 
+          ? ResponsivePadding.sectionSpacing 
+          : ResponsivePadding.smallSpacing,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             "Already have an account? ",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade600,
-              fontSize: fontSize,
-              fontWeight: FontWeight.w400,
+            style: textStyle.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
           GestureDetector(
             onTap: controller.onSignInTap,
             child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth >= 1024 ? 6 : 4,
-                vertical: screenWidth >= 1024 ? 3 : 2,
+              padding: AppTheme.getPadding(
+                horizontal: ResponsivePadding.smallSpacing / 2,
+                vertical: ResponsivePadding.smallSpacing / 4,
               ),
               child: Text(
                 "Sign In",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: const Color(0xFFFE8000),
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w600,
+                style: textStyle.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: AppTypography.semiBold,
                   decoration: TextDecoration.underline,
-                  decorationColor: const Color(0xFFFE8000),
+                  decorationColor: AppColors.primary,
                 ),
               ),
             ),

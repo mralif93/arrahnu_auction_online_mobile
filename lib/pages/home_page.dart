@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_typography.dart';
+import '../utils/app_theme.dart';
+import '../utils/responsive_padding.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,39 +23,63 @@ class _HomePageState extends State<HomePage> {
     "Gold Coins",
   ];
 
+  // Mock data for featured auctions
+  final List<Map<String, String>> featuredAuctions = [
+    {"title": "22K Gold Ring", "price": "RM 850", "time": "2h 15m"},
+    {"title": "Gold Necklace", "price": "RM 1,200", "time": "4h 30m"},
+    {"title": "Gold Bracelet", "price": "RM 950", "time": "1d 2h"},
+  ];
+
+  // Mock data for upcoming auctions
+  final List<Map<String, String>> upcomingAuctions = [
+    {
+      "title": "Gold Earrings Set",
+      "date": "Tomorrow 2:00 PM",
+      "price": "RM 650"
+    },
+    {
+      "title": "Vintage Gold Coin",
+      "date": "Dec 25, 10:00 AM",
+      "price": "RM 1,500"
+    },
+    {
+      "title": "Diamond Ring",
+      "date": "Dec 26, 3:00 PM",
+      "price": "RM 2,200"
+    },
+  ];
+
+  void _showMaterialFeedback(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(milliseconds: 1500),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section
-              _buildHeader(),
-
-              const SizedBox(height: 20),
-
-              // Category Filter
-              _buildCategoryFilter(),
-
-              const SizedBox(height: 24),
-
-              // Featured Auctions Section
-              _buildFeaturedAuctions(),
-
-              const SizedBox(height: 24),
-
-              // Live Auction Card
-              _buildLiveAuctionCard(),
-
-              const SizedBox(height: 24),
-
-              // Upcoming Auctions Section
-              _buildUpcomingAuctions(),
-
-              const SizedBox(height: 20),
+              _buildHeader(screenWidth),
+              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+              _buildCategoryFilter(screenWidth),
+              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+              _buildFeaturedAuctions(screenWidth),
+              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+              _buildLiveAuctionCard(screenWidth),
+              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+              _buildUpcomingAuctions(screenWidth),
+              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
             ],
           ),
         ),
@@ -59,64 +87,52 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(double screenWidth) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [const Color(0xFFFE8000), Colors.amber.shade600],
+          colors: [AppColors.primary, AppColors.primaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: AppTheme.getPadding(
+        horizontal: ResponsivePadding.getTabletPadding(screenWidth),
+        vertical: ResponsivePadding.getTabletPadding(screenWidth),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             "Ar-Rahnu Auction",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+            style: AppTypography.headlineSmall.copyWith(
+              color: AppColors.textWhite,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: ResponsivePadding.smallSpacing),
+          Text(
             "Islamic Gold Auction",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+            style: AppTypography.titleMedium.copyWith(
+              color: AppColors.textWhite,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: ResponsivePadding.largeSpacing),
           // Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              color: AppColors.surface,
+              borderRadius: AppTheme.largeRadius,
+              boxShadow: [AppTheme.defaultShadow],
             ),
             child: TextField(
-              decoration: InputDecoration(
+              decoration: AppTheme.inputDecoration.copyWith(
                 hintText: "Search gold items...",
-                prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                prefixIcon: Icon(Icons.search, color: AppColors.textLight),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
+                contentPadding: AppTheme.getPadding(horizontal: 20, vertical: 16),
               ),
-              onTap: () {
-                _showMaterialFeedback("Search functionality clicked!");
-              },
+              onTap: () => _showMaterialFeedback("Search functionality clicked!"),
             ),
           ),
         ],
@@ -124,35 +140,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCategoryFilter() {
+  Widget _buildCategoryFilter(double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
           child: Text(
             "Categories",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: AppTypography.titleLarge,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth)),
         SizedBox(
-          height: 50,
+          height: ResponsivePadding.isTabletSize(screenWidth) ? 50 : 40,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final category = categories[index];
               final isSelected = category == selectedCategory;
-
               return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: _buildCategoryChip(category, isSelected),
+                padding: AppTheme.getPadding(horizontal: 4, vertical: 0),
+                child: _buildCategoryChip(category, isSelected, screenWidth),
               );
             },
           ),
@@ -161,7 +174,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCategoryChip(String category, bool isSelected) {
+  Widget _buildCategoryChip(String category, bool isSelected, double screenWidth) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -170,68 +183,65 @@ class _HomePageState extends State<HomePage> {
         _showMaterialFeedback("$category selected!");
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: AppTheme.getPadding(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFE8000) : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected ? AppColors.primary : AppColors.surface,
+          borderRadius: AppTheme.mediumRadius,
           border: Border.all(
-            color: isSelected ? const Color(0xFFFE8000) : Colors.grey.shade400,
+            color: isSelected ? AppColors.primary : AppColors.borderLight,
           ),
         ),
         child: Text(
           category,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          style: AppTypography.labelMedium.copyWith(
+            color: isSelected ? AppColors.textWhite : AppColors.textPrimary,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFeaturedAuctions() {
+  Widget _buildFeaturedAuctions(double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Featured Auctions",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                style: AppTypography.titleLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               GestureDetector(
-                onTap: () {
-                  _showMaterialFeedback("View All clicked!");
-                },
-                child: const Text(
+                onTap: () => _showMaterialFeedback("View All clicked!"),
+                child: Text(
                   "View All",
-                  style: TextStyle(
-                    color: Color(0xFFFE8000),
-                    fontWeight: FontWeight.w600,
+                  style: AppTypography.labelMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: AppTypography.semiBold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth)),
         SizedBox(
-          height: 180,
+          height: ResponsivePadding.isTabletSize(screenWidth) ? 220 : 180,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: 3,
+            padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
+            itemCount: featuredAuctions.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: _buildAuctionCard(index),
+                padding: AppTheme.getPadding(horizontal: 8, vertical: 0),
+                child: _buildAuctionCard(index, screenWidth),
               );
             },
           ),
@@ -240,79 +250,68 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildAuctionCard(int index) {
-    final items = [
-      {"title": "22K Gold Ring", "price": "RM 850", "time": "2h 15m"},
-      {"title": "Gold Necklace", "price": "RM 1,200", "time": "4h 30m"},
-      {"title": "Gold Bracelet", "price": "RM 950", "time": "1d 2h"},
-    ];
-
-    final item = items[index];
+  Widget _buildAuctionCard(int index, double screenWidth) {
+    final currentItem = featuredAuctions[index];
 
     return GestureDetector(
-      onTap: () {
-        _showMaterialFeedback("${item['title']} auction clicked!");
-      },
+      onTap: () => _showMaterialFeedback("${currentItem['title'] ?? 'Item'} auction clicked!"),
       child: Container(
-        width: 160,
+        width: ResponsivePadding.isTabletSize(screenWidth) ? 200 : 160,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surface,
+          borderRadius: AppTheme.mediumRadius,
+          boxShadow: [AppTheme.defaultShadow],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 80,
+              height: ResponsivePadding.isTabletSize(screenWidth) ? 100 : 80,
               decoration: BoxDecoration(
-                color: Colors.amber.shade100,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+                color: AppColors.primaryLight.withOpacity(0.2),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(AppTheme.mediumRadius.topLeft.x),
+                  topRight: Radius.circular(AppTheme.mediumRadius.topRight.x),
                 ),
               ),
               child: Center(
                 child: Icon(
                   Icons.diamond,
-                  size: 30,
-                  color: Colors.amber.shade600,
+                  size: ResponsivePadding.isTabletSize(screenWidth) ? 40 : 30,
+                  color: AppColors.primaryLight,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: AppTheme.getPadding(horizontal: 8, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item['title']!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                    currentItem['title'] ?? '',
+                    style: AppTypography.labelMedium.copyWith(
+                      fontWeight: AppTypography.bold,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: ResponsivePadding.smallSpacing / 4),
                   Text(
-                    "Starting ${item['price']}",
-                    style: TextStyle(
-                      color: Colors.green.shade600,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10,
+                    "Starting ${currentItem['price'] ?? 'N/A'}",
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.success,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: ResponsivePadding.smallSpacing / 4),
                   Text(
-                    "Ends in ${item['time']}",
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 9),
+                    "Ends in ${currentItem['time'] ?? 'N/A'}",
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -323,95 +322,105 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLiveAuctionCard() {
+  Widget _buildLiveAuctionCard(double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xFFFE8000), Colors.red.shade600],
+            colors: [AppColors.primary, AppColors.error],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppTheme.largeRadius,
         ),
-        padding: const EdgeInsets.all(20),
+        padding: AppTheme.getPadding(
+          horizontal: ResponsivePadding.getTabletPadding(screenWidth),
+          vertical: ResponsivePadding.getTabletPadding(screenWidth),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: AppTheme.getPadding(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.error,
+                    borderRadius: AppTheme.mediumRadius,
                   ),
-                  child: const Text(
+                  child: Text(
                     "LIVE",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.textWhite,
+                      fontWeight: AppTypography.bold,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: ResponsivePadding.smallSpacing),
+                Text(
                   "Live Auction Now",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  style: AppTypography.titleMedium.copyWith(
+                    color: AppColors.textWhite,
+                    fontWeight: AppTypography.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            const Text(
+            SizedBox(height: ResponsivePadding.smallSpacing),
+            Text(
               "22K Gold Collection",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              style: AppTypography.headlineSmall.copyWith(
+                color: AppColors.textWhite,
+                fontWeight: AppTypography.bold,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: ResponsivePadding.smallSpacing),
+            Text(
               "Ends in",
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.textWhite,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               "01:45:22",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+              style: AppTypography.headlineSmall.copyWith(
+                color: AppColors.textWhite,
+                fontWeight: AppTypography.bold,
                 fontFamily: 'monospace',
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsivePadding.smallSpacing),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  _showMaterialFeedback("Join Live Auction clicked!");
-                },
+                onPressed: () => _showMaterialFeedback("Join Live Auction clicked!"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFFFE8000),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: AppColors.surface,
+                  foregroundColor: AppColors.primary,
+                  padding: AppTheme.getPadding(vertical: 12, horizontal: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppTheme.smallRadius,
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   "Join Now",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: AppTypography.buttonText.copyWith(
+                    color: AppColors.primary,
+                    fontSize: AppTypography.base,
+                    fontWeight: AppTypography.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
@@ -421,55 +430,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildUpcomingAuctions() {
+  Widget _buildUpcomingAuctions(double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: AppTheme.getPadding(horizontal: ResponsivePadding.getTabletPadding(screenWidth)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Upcoming Auctions",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                style: AppTypography.titleLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               GestureDetector(
                 onTap: () {
                   _showMaterialFeedback("Calendar clicked!");
                 },
-                child: const Text(
+                child: Text(
                   "Calendar",
-                  style: TextStyle(
-                    color: Color(0xFFFE8000),
-                    fontWeight: FontWeight.w600,
+                  style: AppTypography.labelMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: AppTypography.semiBold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _buildUpcomingAuctionItem(
-            "Gold Earrings Set",
-            "Tomorrow 2:00 PM",
-            "RM 650",
-          ),
-          const SizedBox(height: 12),
-          _buildUpcomingAuctionItem(
-            "Vintage Gold Coin",
-            "Dec 25, 10:00 AM",
-            "RM 1,500",
-          ),
-          const SizedBox(height: 12),
-          _buildUpcomingAuctionItem(
-            "Diamond Ring",
-            "Dec 26, 3:00 PM",
-            "RM 2,200",
-          ),
+          SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth)),
+          ...upcomingAuctions.map((auction) => Padding(
+            padding: AppTheme.getPadding(vertical: 8, horizontal: 0),
+            child: _buildUpcomingAuctionItem(
+              auction["title"] ?? "Unknown Item",
+              auction["date"] ?? "TBA",
+              auction["price"] ?? "N/A",
+              screenWidth,
+            ),
+          )),
         ],
       ),
     );
@@ -479,68 +480,75 @@ class _HomePageState extends State<HomePage> {
     String title,
     String date,
     String startingPrice,
+    double screenWidth,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.background,
+        borderRadius: AppTheme.mediumRadius,
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Row(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: ResponsivePadding.isTabletSize(screenWidth) ? 60 : 50,
+            height: ResponsivePadding.isTabletSize(screenWidth) ? 60 : 50,
             decoration: BoxDecoration(
-              color: Colors.amber.shade100,
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.primaryLight.withOpacity(0.2),
+              borderRadius: AppTheme.smallRadius,
             ),
-            child: Icon(Icons.schedule, color: Colors.amber.shade600, size: 24),
+            child: Icon(Icons.schedule, color: AppColors.primaryLight, size: ResponsivePadding.isTabletSize(screenWidth) ? 30 : 24),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: ResponsivePadding.smallSpacing),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                  style: AppTypography.titleMedium.copyWith(
+                    fontWeight: AppTypography.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   date,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Starting $startingPrice",
-                  style: TextStyle(
-                    color: Colors.green.shade600,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, color: Colors.grey.shade400, size: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "Starting at",
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                startingPrice,
+                style: AppTypography.titleMedium.copyWith(
+                  fontWeight: AppTypography.semiBold,
+                  color: AppColors.success,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ],
-      ),
-    );
-  }
-
-  // Material feedback
-  void _showMaterialFeedback(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFFFE8000),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

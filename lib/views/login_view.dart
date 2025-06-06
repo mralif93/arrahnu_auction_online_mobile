@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_typography.dart';
+import '../utils/app_theme.dart';
+import '../utils/responsive_padding.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({super.key});
@@ -8,7 +12,7 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -48,31 +52,34 @@ class LoginView extends GetView<LoginController> {
         // Sticky Logo Header
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.only(top: 40, bottom: 16),
+          padding: EdgeInsets.only(
+            top: ResponsivePadding.largeSpacing * 2, 
+            bottom: ResponsivePadding.smallSpacing
+          ),
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+            color: AppColors.background,
           ),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: AppTheme.getPadding(horizontal: 16),
             child: Center(
               child: Container(
                 height: 80,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: AppTheme.getPadding(horizontal: 20),
                 child: Image.asset(
                   'assets/images/logo/001.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 80,
-                      padding: const EdgeInsets.all(16),
+                      padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFE8000).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: AppTheme.mediumRadius,
                       ),
                       child: Icon(
                         Icons.account_balance,
                         size: 48,
-                        color: const Color(0xFFFE8000),
+                        color: AppColors.primary,
                       ),
                     );
                   },
@@ -85,7 +92,7 @@ class LoginView extends GetView<LoginController> {
         // Scrollable Content
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: AppTheme.getPadding(horizontal: 24, vertical: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -95,49 +102,43 @@ class LoginView extends GetView<LoginController> {
                   // Compact Welcome Text
                   Text(
                     "Welcome Back",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade800,
+                    style: AppTypography.titleLarge.copyWith(
+                      color: AppColors.textPrimary,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 4),
+                  SizedBox(height: ResponsivePadding.smallSpacing / 2),
 
                   Text(
                     "Sign in to continue",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: ResponsivePadding.sectionSpacing),
 
                   // Compact Login Form
                   _buildCompactLoginForm(),
 
-                  const SizedBox(height: 16),
-
-                  // Compact Login Button
-                  _buildCompactLoginButton(),
-
-                  const SizedBox(height: 12),
+                  SizedBox(height: ResponsivePadding.smallSpacing),
 
                   // Compact Remember Me & Forgot Password
                   _buildCompactRememberMeSection(),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: ResponsivePadding.smallSpacing),
+
+                  // Compact Login Button
+                  _buildCompactLoginButton(),
+
+                  SizedBox(height: ResponsivePadding.smallSpacing),
 
                   // Compact Sign Up Link
                   _buildCompactSignUpLink(),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: ResponsivePadding.largeSpacing),
                 ],
               ),
             ),
@@ -149,28 +150,24 @@ class LoginView extends GetView<LoginController> {
 
   Widget _buildTabletLayout(BuildContext context, double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.all(
-        8,
-      ), // Reduced from responsive padding to match home page
+      padding: AppTheme.getPadding(horizontal: 8, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: screenWidth >= 1024 ? 10 : 8,
-          ), // Reduced top spacing to match home page
+            height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 8,
+          ),
           // Logo Image Section - 50% Width for Tablets
           _buildTabletLogo(screenWidth),
 
-          SizedBox(height: screenWidth >= 1024 ? 16 : 14),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 14),
 
           // Welcome Text - Tablet optimized
           Text(
             "Welcome Back!",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
+            style: AppTypography.headlineSmall.copyWith(
+              color: AppColors.textPrimary,
               fontSize: _getTabletTitleFontSize(screenWidth),
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade800,
             ),
             textAlign: TextAlign.center,
           ),
@@ -178,43 +175,41 @@ class LoginView extends GetView<LoginController> {
           SizedBox(height: screenWidth >= 1024 ? 8 : 6),
 
           Container(
-            padding: EdgeInsets.symmetric(
+            padding: AppTheme.getPadding(
               horizontal: screenWidth >= 1024 ? 32 : 28,
             ),
             child: Text(
               "Sign in to your account",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
                 fontSize: _getTabletSubtitleFontSize(screenWidth),
-                fontWeight: FontWeight.w400,
-                color: Colors.grey.shade600,
                 height: 1.2,
               ),
               textAlign: TextAlign.center,
             ),
           ),
 
-          SizedBox(height: screenWidth >= 1024 ? 20 : 18),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.largeSpacing : 18),
 
           // Login Form - Tablet optimized
           _buildTabletLoginForm(screenWidth),
 
-          SizedBox(height: screenWidth >= 1024 ? 14 : 12),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 12),
 
           // Remember Me & Forgot Password - Tablet optimized
           _buildTabletRememberMeSection(screenWidth),
 
-          SizedBox(height: screenWidth >= 1024 ? 18 : 16),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 16),
 
           // Login Button - Tablet optimized
           _buildTabletLoginButton(screenWidth),
 
-          SizedBox(height: screenWidth >= 1024 ? 18 : 16),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 16),
 
           // Sign Up Link - Tablet optimized
           _buildTabletSignUpLink(screenWidth),
 
-          SizedBox(height: screenWidth >= 1024 ? 14 : 12),
+          SizedBox(height: screenWidth >= 1024 ? ResponsivePadding.smallSpacing : 12),
         ],
       ),
     );
@@ -227,26 +222,19 @@ class LoginView extends GetView<LoginController> {
         TextFormField(
           controller: controller.emailController,
           keyboardType: TextInputType.emailAddress,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
+          style: AppTypography.bodyMedium,
+          decoration: AppTheme.inputDecoration.copyWith(
             hintText: "Email address",
-            hintStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
+            hintStyle: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textLight,
             ),
             prefixIcon: Icon(
               Icons.email_outlined,
-              color: const Color(0xFFFE8000),
+              color: AppColors.primary,
               size: 18,
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppColors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
@@ -276,22 +264,15 @@ class LoginView extends GetView<LoginController> {
           () => TextFormField(
             controller: controller.passwordController,
             obscureText: !controller.isPasswordVisible.value,
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-            ),
-            decoration: InputDecoration(
+            style: AppTypography.bodyMedium,
+            decoration: AppTheme.inputDecoration.copyWith(
               hintText: "Password",
-              hintStyle: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w400,
-                fontSize: 13,
+              hintStyle: AppTypography.bodyMedium.copyWith(
+                color: AppColors.textLight,
               ),
               prefixIcon: Icon(
                 Icons.lock_outline,
-                color: const Color(0xFFFE8000),
+                color: AppColors.primary,
                 size: 18,
               ),
               suffixIcon: IconButton(
@@ -299,32 +280,13 @@ class LoginView extends GetView<LoginController> {
                   controller.isPasswordVisible.value
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                   size: 18,
                 ),
                 onPressed: controller.togglePasswordVisibility,
               ),
               filled: true,
-              fillColor: Colors.grey.shade50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
-                  width: 1.5,
-                ),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
+              fillColor: AppColors.background,
             ),
           ),
         ),
@@ -344,25 +306,22 @@ class LoginView extends GetView<LoginController> {
                 child: Checkbox(
                   value: controller.rememberMe.value,
                   onChanged: controller.toggleRememberMe,
-                  activeColor: const Color(0xFFFE8000),
-                  checkColor: Colors.white,
-                  side: BorderSide(color: Colors.grey.shade400, width: 1),
+                  activeColor: AppColors.primary,
+                  checkColor: AppColors.textWhite,
+                  side: BorderSide(color: AppColors.border, width: 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: AppTheme.getRadius(4),
                   ),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity: VisualDensity.compact,
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: ResponsivePadding.smallSpacing / 2),
             Text(
               "Remember me",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                color: Colors.grey.shade700,
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -391,30 +350,27 @@ class LoginView extends GetView<LoginController> {
     return Obx(
       () => ElevatedButton(
         onPressed: controller.isLoading.value ? null : controller.handleLogin,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFE8000),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 2,
-          shadowColor: const Color(0xFFFE8000).withValues(alpha: 0.3),
+        style: AppTheme.primaryButtonStyle.copyWith(
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 14),
+          ),
+          elevation: MaterialStateProperty.all(2),
+          shadowColor: MaterialStateProperty.all(
+            AppColors.primary.withOpacity(0.3),
+          ),
         ),
         child: controller.isLoading.value
-            ? const SizedBox(
+            ? SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: AppColors.textWhite,
                   strokeWidth: 2,
                 ),
               )
-            : const Text(
+            : Text(
                 "Sign In",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.buttonText,
               ),
       ),
     );
@@ -426,24 +382,19 @@ class LoginView extends GetView<LoginController> {
       children: [
         Text(
           "Don't have an account? ",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            color: Colors.grey.shade600,
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
         GestureDetector(
           onTap: controller.onSignUpTap,
-          child: const Text(
+          child: Text(
             "Sign Up",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Color(0xFFFE8000),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: AppTypography.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: AppTypography.semiBold,
               decoration: TextDecoration.underline,
-              decorationColor: Color(0xFFFE8000),
+              decorationColor: AppColors.primary,
             ),
           ),
         ),
@@ -452,21 +403,20 @@ class LoginView extends GetView<LoginController> {
   }
 
   // Tablet responsive helper methods
-
   double _getTabletTitleFontSize(double screenWidth) {
-    if (screenWidth >= 1194) return 26.0; // 14" tablets
-    if (screenWidth >= 1112) return 24.0; // 13" tablets
-    if (screenWidth >= 1024) return 22.0; // 12" tablets
-    if (screenWidth >= 834) return 21.0; // 11" tablets
-    return 20.0; // 10" tablets
+    if (screenWidth >= 1194) return AppTypography.xl4; // 14" tablets
+    if (screenWidth >= 1112) return AppTypography.xl3; // 13" tablets
+    if (screenWidth >= 1024) return AppTypography.xl2; // 12" tablets
+    if (screenWidth >= 834) return AppTypography.xl; // 11" tablets
+    return AppTypography.lg; // 10" tablets
   }
 
   double _getTabletSubtitleFontSize(double screenWidth) {
-    if (screenWidth >= 1194) return 15.0; // 14" tablets
-    if (screenWidth >= 1112) return 14.0; // 13" tablets
-    if (screenWidth >= 1024) return 13.0; // 12" tablets
-    if (screenWidth >= 834) return 13.0; // 11" tablets
-    return 12.0; // 10" tablets
+    if (screenWidth >= 1194) return AppTypography.base; // 14" tablets
+    if (screenWidth >= 1112) return AppTypography.sm; // 13" tablets
+    if (screenWidth >= 1024) return AppTypography.sm; // 12" tablets
+    if (screenWidth >= 834) return AppTypography.sm; // 11" tablets
+    return AppTypography.xs; // 10" tablets
   }
 
   Widget _buildTabletLogo(double screenWidth) {
@@ -474,14 +424,14 @@ class LoginView extends GetView<LoginController> {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(
+      margin: AppTheme.getPadding(
         horizontal: screenWidth >= 1024 ? 24 : 20,
         vertical: screenWidth >= 1024 ? 12 : 10,
       ),
       child: Center(
         child: Container(
           height: logoHeight,
-          padding: EdgeInsets.symmetric(
+          padding: AppTheme.getPadding(
             horizontal: screenWidth >= 1024 ? 32 : 24,
           ),
           child: Image.asset(
@@ -490,17 +440,15 @@ class LoginView extends GetView<LoginController> {
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 height: logoHeight,
-                padding: EdgeInsets.all(screenWidth >= 1024 ? 20 : 16),
+                padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFE8000).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: AppTheme.mediumRadius,
                 ),
                 child: Icon(
                   Icons.account_balance,
                   size: logoHeight * 0.6,
-                  color: const Color(0xFFFE8000),
+                  color: AppColors.primary,
                 ),
               );
             },
@@ -521,9 +469,9 @@ class LoginView extends GetView<LoginController> {
   }
 
   Widget _buildTabletLoginForm(double screenWidth) {
-    final fieldSpacing = screenWidth >= 1024 ? 20.0 : 18.0;
-    final fontSize = screenWidth >= 1024 ? 18.0 : 16.0;
-    final labelFontSize = screenWidth >= 1024 ? 18.0 : 16.0;
+    final fieldSpacing = screenWidth >= 1024 ? ResponsivePadding.largeSpacing : 18.0;
+    final fontSize = screenWidth >= 1024 ? AppTypography.lg : AppTypography.base;
+    final labelFontSize = screenWidth >= 1024 ? AppTypography.lg : AppTypography.base;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,20 +479,18 @@ class LoginView extends GetView<LoginController> {
         // Email Field
         Text(
           "Email Address",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
+          style: AppTypography.titleMedium.copyWith(
             fontSize: labelFontSize,
+            color: AppColors.textPrimary,
           ),
         ),
         SizedBox(height: screenWidth >= 1024 ? 10 : 8),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 16 : 12),
+            borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: AppColors.shadowColor,
                 blurRadius: screenWidth >= 1024 ? 12 : 8,
                 offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
               ),
@@ -552,47 +498,38 @@ class LoginView extends GetView<LoginController> {
           ),
           child: TextFormField(
             controller: controller.emailController,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
+            style: AppTypography.bodyLarge.copyWith(
               fontSize: fontSize,
-              fontWeight: FontWeight.w400,
             ),
-            decoration: InputDecoration(
+            decoration: AppTheme.inputDecoration.copyWith(
               hintText: "Enter your email address",
-              hintStyle: TextStyle(
-                color: Colors.grey.shade500,
-                fontFamily: 'Montserrat',
+              hintStyle: AppTypography.bodyLarge.copyWith(
                 fontSize: fontSize,
+                color: AppColors.textLight,
               ),
               prefixIcon: Icon(
                 Icons.email_outlined,
-                color: const Color(0xFFFE8000),
+                color: AppColors.primary,
                 size: screenWidth >= 1024 ? 24 : 22,
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: AppColors.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
+                borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
+                borderSide: BorderSide(color: AppColors.border, width: 1),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  screenWidth >= 1024 ? 16 : 12,
-                ),
-                borderSide: const BorderSide(
-                  color: Color(0xFFFE8000),
+                borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
+                borderSide: BorderSide(
+                  color: AppColors.primary,
                   width: 2,
                 ),
               ),
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: AppTheme.getPadding(
                 horizontal: screenWidth >= 1024 ? 24 : 20,
                 vertical: screenWidth >= 1024 ? 22 : 20,
               ),
@@ -614,10 +551,10 @@ class LoginView extends GetView<LoginController> {
         SizedBox(height: screenWidth >= 1024 ? 10 : 8),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth >= 1024 ? 16 : 12),
+            borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: AppColors.shadowColor,
                 blurRadius: screenWidth >= 1024 ? 12 : 8,
                 offset: Offset(0, screenWidth >= 1024 ? 3 : 2),
               ),
@@ -627,21 +564,18 @@ class LoginView extends GetView<LoginController> {
             () => TextFormField(
               controller: controller.passwordController,
               obscureText: !controller.isPasswordVisible.value,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
+              style: AppTypography.bodyLarge.copyWith(
                 fontSize: fontSize,
-                fontWeight: FontWeight.w400,
               ),
-              decoration: InputDecoration(
+              decoration: AppTheme.inputDecoration.copyWith(
                 hintText: "Enter your password",
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontFamily: 'Montserrat',
+                hintStyle: AppTypography.bodyLarge.copyWith(
                   fontSize: fontSize,
+                  color: AppColors.textLight,
                 ),
                 prefixIcon: Icon(
                   Icons.lock_outline,
-                  color: const Color(0xFFFE8000),
+                  color: AppColors.primary,
                   size: screenWidth >= 1024 ? 24 : 22,
                 ),
                 suffixIcon: IconButton(
@@ -649,35 +583,29 @@ class LoginView extends GetView<LoginController> {
                     !controller.isPasswordVisible.value
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary,
                     size: screenWidth >= 1024 ? 24 : 22,
                   ),
                   onPressed: controller.togglePasswordVisibility,
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: AppColors.surface,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
+                  borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
-                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                  borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
+                  borderSide: BorderSide(color: AppColors.border, width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth >= 1024 ? 16 : 12,
-                  ),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFFE8000),
+                  borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
+                  borderSide: BorderSide(
+                    color: AppColors.primary,
                     width: 2,
                   ),
                 ),
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: AppTheme.getPadding(
                   horizontal: screenWidth >= 1024 ? 24 : 20,
                   vertical: screenWidth >= 1024 ? 22 : 20,
                 ),
@@ -690,10 +618,12 @@ class LoginView extends GetView<LoginController> {
   }
 
   Widget _buildTabletRememberMeSection(double screenWidth) {
-    final fontSize = screenWidth >= 1024 ? 16.0 : 14.0;
+    final fontSize = screenWidth >= 1024 ? AppTypography.base : AppTypography.sm;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: screenWidth >= 1024 ? 6 : 4),
+      padding: AppTheme.getPadding(
+        vertical: screenWidth >= 1024 ? 6 : 4
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -706,27 +636,23 @@ class LoginView extends GetView<LoginController> {
                   child: Checkbox(
                     value: controller.rememberMe.value,
                     onChanged: controller.toggleRememberMe,
-                    activeColor: const Color(0xFFFE8000),
-                    checkColor: Colors.white,
-                    side: BorderSide(color: Colors.grey.shade400, width: 2),
+                    activeColor: AppColors.primary,
+                    checkColor: AppColors.textWhite,
+                    side: BorderSide(color: AppColors.border, width: 2),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        screenWidth >= 1024 ? 10 : 8,
-                      ),
+                      borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 10 : 8),
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
               ),
-              SizedBox(width: screenWidth >= 1024 ? 10 : 8),
+              SizedBox(width: ResponsivePadding.smallSpacing),
               Text(
                 "Remember me",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: Colors.grey.shade700,
+                style: AppTypography.bodyLarge.copyWith(
+                  color: AppColors.textPrimary,
                   fontSize: fontSize,
-                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
@@ -735,10 +661,10 @@ class LoginView extends GetView<LoginController> {
             onPressed: controller.onForgotPasswordTap,
             child: Text(
               "Forgot Password?",
-              style: TextStyle(
-                color: const Color(0xFFFE8000),
+              style: AppTypography.bodyLarge.copyWith(
+                color: AppColors.primary,
                 fontSize: fontSize,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppTypography.semiBold,
               ),
             ),
           ),
@@ -749,17 +675,17 @@ class LoginView extends GetView<LoginController> {
 
   Widget _buildTabletLoginButton(double screenWidth) {
     final buttonHeight = screenWidth >= 1024 ? 56.0 : 52.0;
-    final fontSize = screenWidth >= 1024 ? 20.0 : 18.0;
+    final fontSize = screenWidth >= 1024 ? AppTypography.xl : AppTypography.lg;
     final borderRadius = screenWidth >= 1024 ? 16.0 : 12.0;
 
     return Container(
       width: double.infinity,
       height: buttonHeight,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: AppTheme.getRadius(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: screenWidth >= 1024 ? 16 : 12,
             offset: Offset(0, screenWidth >= 1024 ? 6 : 4),
           ),
@@ -768,29 +694,28 @@ class LoginView extends GetView<LoginController> {
       child: Obx(
         () => ElevatedButton(
           onPressed: controller.isLoading.value ? null : controller.handleLogin,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFE8000),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+          style: AppTheme.primaryButtonStyle.copyWith(
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: AppTheme.getRadius(borderRadius),
+              ),
             ),
-            elevation: 0,
+            elevation: MaterialStateProperty.all(0),
           ),
           child: controller.isLoading.value
               ? SizedBox(
                   width: screenWidth >= 1024 ? 26 : 22,
                   height: screenWidth >= 1024 ? 26 : 22,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
+                  child: CircularProgressIndicator(
+                    color: AppColors.textWhite,
                     strokeWidth: 2.5,
                   ),
                 )
               : Text(
                   "Sign In",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
+                  style: AppTypography.buttonText.copyWith(
                     fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppTypography.semiBold,
                   ),
                 ),
         ),
@@ -799,38 +724,37 @@ class LoginView extends GetView<LoginController> {
   }
 
   Widget _buildTabletSignUpLink(double screenWidth) {
-    final fontSize = screenWidth >= 1024 ? 18.0 : 16.0;
+    final fontSize = screenWidth >= 1024 ? AppTypography.lg : AppTypography.base;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: screenWidth >= 1024 ? 10 : 8),
+      padding: AppTheme.getPadding(
+        vertical: screenWidth >= 1024 ? 10 : 8
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             "Don't have an account? ",
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.grey.shade600,
+            style: AppTypography.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
               fontSize: fontSize,
-              fontWeight: FontWeight.w400,
             ),
           ),
           GestureDetector(
             onTap: controller.onSignUpTap,
             child: Container(
-              padding: EdgeInsets.symmetric(
+              padding: AppTheme.getPadding(
                 horizontal: screenWidth >= 1024 ? 6 : 4,
                 vertical: screenWidth >= 1024 ? 3 : 2,
               ),
               child: Text(
                 "Sign Up",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: const Color(0xFFFE8000),
+                style: AppTypography.bodyLarge.copyWith(
+                  color: AppColors.primary,
                   fontSize: fontSize,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppTypography.semiBold,
                   decoration: TextDecoration.underline,
-                  decorationColor: const Color(0xFFFE8000),
+                  decorationColor: AppColors.primary,
                 ),
               ),
             ),

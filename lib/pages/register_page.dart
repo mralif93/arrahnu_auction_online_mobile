@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_typography.dart';
+import '../utils/app_theme.dart';
+import '../utils/responsive_padding.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -25,58 +29,66 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: AppTheme.getPadding(
+              horizontal: ResponsivePadding.getTabletPadding(screenWidth),
+              vertical: ResponsivePadding.getTabletPadding(screenWidth),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 60),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth) * 2),
 
                 // Logo/Icon Section
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: ResponsivePadding.isTabletSize(screenWidth) ? 100 : 80,
+                  height: ResponsivePadding.isTabletSize(screenWidth) ? 100 : 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFE8000),
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppColors.primary,
+                    borderRadius: AppTheme.largeRadius,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person_add,
-                    size: 40,
-                    color: Colors.white,
+                    size: ResponsivePadding.isTabletSize(screenWidth) ? 50 : 40,
+                    color: AppColors.textWhite,
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
 
                 // Welcome Text
-                const Text(
+                Text(
                   "Create Account",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                  style: AppTypography.headlineSmall.copyWith(
+                    fontWeight: AppTypography.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth)),
 
                 Text(
                   "Join Ar-Rahnu Auction today",
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth) * 1.5),
 
                 // Register Form
-                _buildRegisterForm(),
+                _buildRegisterForm(screenWidth),
 
-                const SizedBox(height: 20),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
 
                 // Terms and Conditions
                 Row(
@@ -88,17 +100,18 @@ class _RegisterPageState extends State<RegisterPage> {
                           _agreeToTerms = value ?? false;
                         });
                       },
-                      activeColor: const Color(0xFFFE8000),
+                      activeColor: AppColors.primary,
                     ),
                     Expanded(
                       child: Row(
                         children: [
-                          const Text(
+                          Text(
                             "I agree to the ",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 14,
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.textPrimary,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           TextButton(
                             onPressed: () {
@@ -106,14 +119,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                 "Terms & Conditions clicked!",
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               "Terms & Conditions",
-                              style: TextStyle(
-                                color: Color(0xFFFE8000),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                              style: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: AppTypography.semiBold,
                                 decoration: TextDecoration.underline,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -122,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
 
                 // Register Button
                 SizedBox(
@@ -130,11 +144,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleRegister,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFE8000),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.textWhite,
+                      padding: AppTheme.getPadding(vertical: 16, horizontal: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppTheme.smallRadius,
                       ),
                     ),
                     child: _isLoading
@@ -142,21 +156,23 @@ class _RegisterPageState extends State<RegisterPage> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: AppColors.textWhite,
                               strokeWidth: 2,
                             ),
                           )
-                        : const Text(
+                        : Text(
                             "Create Account",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                            style: AppTypography.buttonText.copyWith(
+                              fontSize: AppTypography.lg,
+                              fontWeight: AppTypography.bold,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth) * 1.5),
 
                 // Sign In Link
                 Row(
@@ -164,10 +180,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Text(
                       "Already have an account? ",
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     TextButton(
                       onPressed: () {
@@ -175,17 +192,18 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       child: const Text(
                         "Sign In",
-                        style: TextStyle(
-                          color: Color(0xFFFE8000),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: AppTypography.bold,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
               ],
             ),
           ),
@@ -194,91 +212,80 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildRegisterForm() {
+  Widget _buildRegisterForm(double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Full Name Field
-        const Text(
+        Text(
           "Full Name",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-            fontSize: 16,
+          style: AppTypography.titleSmall.copyWith(
+            fontWeight: AppTypography.semiBold,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth) / 2),
         TextFormField(
           controller: _nameController,
-          decoration: InputDecoration(
+          decoration: AppTheme.inputDecoration.copyWith(
             hintText: "Enter your full name",
-            prefixIcon: const Icon(Icons.person_outline),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFFE8000), width: 2),
-            ),
+            prefixIcon: Icon(Icons.person_outline, color: AppColors.textLight),
+            contentPadding: ResponsivePadding.getInputContentPadding(screenWidth),
           ),
         ),
 
-        const SizedBox(height: 20),
+        SizedBox(height: ResponsivePadding.getFormFieldSpacing(screenWidth)),
 
         // Email Field
-        const Text(
+        Text(
           "Email Address",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-            fontSize: 16,
+          style: AppTypography.titleSmall.copyWith(
+            fontWeight: AppTypography.semiBold,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth) / 2),
         TextFormField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
+          decoration: AppTheme.inputDecoration.copyWith(
             hintText: "Enter your email address",
-            prefixIcon: const Icon(Icons.email_outlined),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFFE8000), width: 2),
-            ),
+            prefixIcon: Icon(Icons.email_outlined, color: AppColors.textLight),
+            contentPadding: ResponsivePadding.getInputContentPadding(screenWidth),
           ),
         ),
 
-        const SizedBox(height: 20),
+        SizedBox(height: ResponsivePadding.getFormFieldSpacing(screenWidth)),
 
         // Password Field
-        const Text(
+        Text(
           "Password",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-            fontSize: 16,
+          style: AppTypography.titleSmall.copyWith(
+            fontWeight: AppTypography.semiBold,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ResponsivePadding.getSmallSpacing(screenWidth) / 2),
         TextFormField(
           controller: _passwordController,
           obscureText: !_isPasswordVisible,
-          decoration: InputDecoration(
+          decoration: AppTheme.inputDecoration.copyWith(
             hintText: "Create a strong password",
-            prefixIcon: const Icon(Icons.lock_outline),
+            prefixIcon: Icon(Icons.lock_outline, color: AppColors.textLight),
+            contentPadding: ResponsivePadding.getInputContentPadding(screenWidth),
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: AppColors.textLight,
               ),
               onPressed: () {
                 setState(() {
                   _isPasswordVisible = !_isPasswordVisible;
                 });
               },
-            ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFFE8000), width: 2),
             ),
           ),
         ),
@@ -319,9 +326,9 @@ class _RegisterPageState extends State<RegisterPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: const Color(0xFFFE8000),
+        backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: AppTheme.smallRadius),
       ),
     );
   }
