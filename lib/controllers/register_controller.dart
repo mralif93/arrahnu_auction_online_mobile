@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'account_controller.dart';
+import '../services/auth_service.dart';
+import '../models/auth_models.dart';
 
 class RegisterController extends GetxController {
   // Text editing controllers
@@ -23,6 +25,10 @@ class RegisterController extends GetxController {
   var isConfirmPasswordVisible = false.obs;
   var agreeToTerms = false.obs;
   var isLoading = false.obs;
+  var errorMessage = ''.obs;
+
+  // Services
+  final AuthService _authService = AuthService();
 
   @override
   void onClose() {
@@ -67,32 +73,120 @@ class RegisterController extends GetxController {
   }
 
   Future<void> handleRegister() async {
+    // Validation
     if (fullNameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
-      // Validation failed - fields are empty
+      errorMessage.value = 'Please fill all required fields';
       return;
     }
 
     if (passwordController.text != confirmPasswordController.text) {
-      // Validation failed - passwords don't match
+      errorMessage.value = 'Passwords do not match';
+      return;
+    }
+
+    if (passwordController.text.length < 6) {
+      errorMessage.value = 'Password must be at least 6 characters';
       return;
     }
 
     if (!agreeToTerms.value) {
-      // Validation failed - terms not agreed
+      errorMessage.value = 'Please agree to terms and conditions';
       return;
     }
 
     isLoading.value = true;
+    errorMessage.value = '';
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final request = RegisterRequest(
+        fullName: fullNameController.text,
+        username: fullNameController.text.toLowerCase().replaceAll(' ', ''),
+        email: emailController.text,
+        password: passwordController.text,
+        passwordConfirmation: confirmPasswordController.text,
+        phoneNumber: phoneController.text.isNotEmpty ? phoneController.text : null,
+      );
 
-    isLoading.value = false;
+      final result = await _authService.register(request);
 
-    // Registration successful - could navigate to login or dashboard
-    // TODO: Implement post-registration flow
+      if (result.success && result.user != null) {
+        
+        // Show success message with proper instructions
+        String successMessage = 'Account created successfully!';
+        
+        // Check if email verification is required
+        if (result.user!.status == 'pending_approval') {
+          successMessage = 'Account created successfully!\n\nPlease check your email to verify your account. After email verification, your account will be reviewed by our administrators.';
+        }
+        
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Registration Successful'),
+            content: Text(successMessage),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back(); // Close dialog
+                  // Navigate to login page
+                  final accountController = Get.find<AccountController>();
+                  accountController.showLoginPage();
+                  // Clear form
+                  _clearForm();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        final error = result.error ?? 'Registration failed';
+        errorMessage.value = error;
+        
+        // Also show snackbar for immediate feedback
+        Get.snackbar(
+          'Registration Failed',
+          error,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5),
+        );
+      }
+    } catch (e) {
+      final error = 'An unexpected error occurred: $e';
+      errorMessage.value = error;
+      
+      // Show snackbar for immediate feedback
+      Get.snackbar(
+        'Error',
+        error,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _clearForm() {
+    fullNameController.clear();
+    icNumberController.clear();
+    emailController.clear();
+    phoneController.clear();
+    address1Controller.clear();
+    address2Controller.clear();
+    address3Controller.clear();
+    postcodeController.clear();
+    cityController.clear();
+    stateController.clear();
+    countryController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    agreeToTerms.value = false;
+    errorMessage.value = '';
   }
 }

@@ -112,4 +112,17 @@ class ResponsivePadding {
     if (screenWidth >= 768) return 14.0; // 10-11" tablets
     return 10.0; // Mobile
   }
+
+  /// Standard symmetric padding method
+  static EdgeInsets symmetric({double? horizontal, double? vertical}) {
+    return EdgeInsets.symmetric(
+      horizontal: horizontal ?? mobile,
+      vertical: vertical ?? sectionSpacing,
+    );
+  }
+
+  /// Standard padding method
+  static EdgeInsets standard() {
+    return const EdgeInsets.all(mobile);
+  }
 }

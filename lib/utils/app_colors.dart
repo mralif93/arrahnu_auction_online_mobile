@@ -9,6 +9,7 @@ class AppColors {
   // Background Colors
   static const Color background = Color(0xFFFAFAFA);
   static const Color surface = Colors.white;
+  static const Color surfaceVariant = Color(0xFFF5F5F5);
   static const Color cardBackground = Colors.white;
 
   // Text Colors
@@ -29,15 +30,15 @@ class AppColors {
   static const Color info = Color(0xFF2196F3);     // blue
 
   // Utility Colors
-  static Color shadowColor = Colors.black.withOpacity(0.1);
-  static Color overlayColor = Colors.black.withOpacity(0.5);
+  static Color shadowColor = Colors.black.withValues(alpha: 0.1);
+  static Color overlayColor = Colors.black.withValues(alpha: 0.5);
 
   // Container Colors
-  static Color containerBorder = primary.withOpacity(0.2);
+  static Color containerBorder = primary.withValues(alpha: 0.2);
   static const Color containerShadow = Color(0xFFE0E0E0);
 
   // Get color with opacity
   static Color withOpacity(Color color, double opacity) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
 }

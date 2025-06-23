@@ -104,7 +104,6 @@ class CollateralDetailView extends GetView<HomeController> {
   }
 
   Widget _buildImageGallery() {
-    // Mock multiple images - in real app, this would come from collateral data
     final images = ['Image 1', 'Image 2', 'Image 3', 'Image 4'];
 
     return Column(
@@ -120,7 +119,7 @@ class CollateralDetailView extends GetView<HomeController> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
+        SizedBox(
           height: 200,
           child: PageView.builder(
             itemCount: images.length,

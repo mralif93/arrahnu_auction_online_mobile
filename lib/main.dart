@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'views/main_navigation_view.dart';
@@ -8,9 +7,31 @@ import 'controllers/home_controller.dart';
 import 'controllers/login_controller.dart';
 import 'controllers/register_controller.dart';
 import 'controllers/dashboard_controller.dart';
+import 'controllers/forgot_password_controller.dart';
+import 'controllers/profile_controller.dart';
+import 'pages/forgot_password_page.dart';
+import 'pages/profile_page.dart';
+import 'pages/update_profile_page.dart';
+import 'pages/api_verification_page.dart';
+import 'services/storage_service.dart';
+import 'services/auth_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize storage service first
+  await initServices();
+  
   runApp(const MyApp());
+}
+
+Future<void> initServices() async {
+  // Initialize storage service
+  final storageService = await StorageService.init();
+  Get.put(storageService);
+  
+  // Initialize auth service
+  Get.put(AuthService());
 }
 
 class MyApp extends StatelessWidget {
@@ -116,13 +137,45 @@ class MyApp extends StatelessWidget {
       ),
       home: const MainNavigationView(),
       debugShowCheckedModeBanner: false,
+      getPages: [
+        GetPage(
+          name: '/forgot-password',
+          page: () => const ForgotPasswordPage(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut(() => ForgotPasswordController());
+          }),
+        ),
+        GetPage(
+          name: '/profile',
+          page: () => const ProfilePage(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut(() => ProfileController());
+          }),
+        ),
+        GetPage(
+          name: '/update-profile',
+          page: () => const UpdateProfilePage(),
+          binding: BindingsBuilder(() {
+            // Reuse the same controller instance if it exists
+            if (!Get.isRegistered<ProfileController>()) {
+              Get.lazyPut(() => ProfileController());
+            }
+          }),
+        ),
+        GetPage(
+          name: '/api-verification',
+          page: () => const ApiVerificationPage(),
+        ),
+      ],
       initialBinding: BindingsBuilder(() {
+        // Initialize controllers (StorageService is already initialized)
         Get.put(NavigationController());
         Get.put(AccountController());
         Get.put(HomeController());
         Get.put(LoginController());
         Get.put(RegisterController());
         Get.put(DashboardController());
+        Get.put(ProfileController());
       }),
     );
   }

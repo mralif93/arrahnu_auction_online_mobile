@@ -18,7 +18,7 @@ class AppTheme {
     color: AppColors.surface,
     borderRadius: BorderRadius.circular(12),
     border: Border.all(
-      color: AppColors.primary.withOpacity(0.2),
+      color: AppColors.primary.withValues(alpha: 0.2),
       width: 1,
     ),
     boxShadow: [defaultShadow],
@@ -99,19 +99,19 @@ class AppTheme {
 
   // Status Indicators
   static BoxDecoration get successIndicator => BoxDecoration(
-    color: AppColors.success.withOpacity(0.1),
+    color: AppColors.success.withValues(alpha: 0.1),
     borderRadius: smallRadius,
     border: Border.all(color: AppColors.success),
   );
 
   static BoxDecoration get errorIndicator => BoxDecoration(
-    color: AppColors.error.withOpacity(0.1),
+    color: AppColors.error.withValues(alpha: 0.1),
     borderRadius: smallRadius,
     border: Border.all(color: AppColors.error),
   );
 
   static BoxDecoration get warningIndicator => BoxDecoration(
-    color: AppColors.warning.withOpacity(0.1),
+    color: AppColors.warning.withValues(alpha: 0.1),
     borderRadius: smallRadius,
     border: Border.all(color: AppColors.warning),
   );

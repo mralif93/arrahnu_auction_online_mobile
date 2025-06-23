@@ -62,9 +62,8 @@ class LoginView extends GetView<LoginController> {
           child: Container(
             margin: AppTheme.getPadding(horizontal: 16),
             child: Center(
-              child: Container(
-                height: 80,
-                padding: AppTheme.getPadding(horizontal: 20),
+              child: SizedBox(
+                height: 100,
                 child: Image.asset(
                   'assets/images/logo/001.png',
                   fit: BoxFit.contain,
@@ -73,7 +72,7 @@ class LoginView extends GetView<LoginController> {
                       height: 80,
                       padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: AppTheme.mediumRadius,
                       ),
                       child: Icon(
@@ -260,36 +259,34 @@ class LoginView extends GetView<LoginController> {
         const SizedBox(height: 12),
 
         // Compact Password Field
-        Obx(
-          () => TextFormField(
-            controller: controller.passwordController,
-            obscureText: !controller.isPasswordVisible.value,
-            style: AppTypography.bodyMedium,
-            decoration: AppTheme.inputDecoration.copyWith(
-              hintText: "Password",
-              hintStyle: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textLight,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outline,
-                color: AppColors.primary,
+        Obx(() => TextFormField(
+          controller: controller.passwordController,
+          obscureText: !controller.isPasswordVisible.value,
+          style: AppTypography.bodyMedium,
+          decoration: AppTheme.inputDecoration.copyWith(
+            hintText: "Password",
+            hintStyle: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textLight,
+            ),
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: AppColors.primary,
+              size: 18,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                controller.isPasswordVisible.value
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: AppColors.textSecondary,
                 size: 18,
               ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  controller.isPasswordVisible.value
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: AppColors.textSecondary,
-                  size: 18,
-                ),
-                onPressed: controller.togglePasswordVisibility,
-              ),
-              filled: true,
-              fillColor: AppColors.background,
+              onPressed: controller.togglePasswordVisibility,
             ),
+            filled: true,
+            fillColor: AppColors.background,
           ),
-        ),
+        )),
       ],
     );
   }
@@ -326,19 +323,13 @@ class LoginView extends GetView<LoginController> {
             ),
           ],
         ),
-        TextButton(
-          onPressed: controller.onForgotPasswordTap,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: const Text(
+        GestureDetector(
+          onTap: controller.onForgotPasswordTap,
+          child: Text(
             "Forgot Password?",
-            style: TextStyle(
-              color: Color(0xFFFE8000),
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.primary,
+              fontWeight: AppTypography.semiBold,
             ),
           ),
         ),
@@ -349,14 +340,16 @@ class LoginView extends GetView<LoginController> {
   Widget _buildCompactLoginButton() {
     return Obx(
       () => ElevatedButton(
-        onPressed: controller.isLoading.value ? null : controller.handleLogin,
+        onPressed: controller.isLoading.value 
+            ? null 
+            : controller.handleLogin,
         style: AppTheme.primaryButtonStyle.copyWith(
-          padding: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(vertical: 14),
           ),
-          elevation: MaterialStateProperty.all(2),
-          shadowColor: MaterialStateProperty.all(
-            AppColors.primary.withOpacity(0.3),
+          elevation: WidgetStateProperty.all(2),
+          shadowColor: WidgetStateProperty.all(
+            AppColors.primary.withValues(alpha: 0.3),
           ),
         ),
         child: controller.isLoading.value
@@ -442,7 +435,7 @@ class LoginView extends GetView<LoginController> {
                 height: logoHeight,
                 padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: AppTheme.mediumRadius,
                 ),
                 child: Icon(
@@ -657,14 +650,20 @@ class LoginView extends GetView<LoginController> {
               ),
             ],
           ),
-          TextButton(
-            onPressed: controller.onForgotPasswordTap,
-            child: Text(
-              "Forgot Password?",
-              style: AppTypography.bodyLarge.copyWith(
-                color: AppColors.primary,
-                fontSize: fontSize,
-                fontWeight: AppTypography.semiBold,
+          GestureDetector(
+            onTap: controller.onForgotPasswordTap,
+            child: Container(
+              padding: AppTheme.getPadding(
+                horizontal: screenWidth >= 1024 ? 6 : 4,
+                vertical: screenWidth >= 1024 ? 3 : 2,
+              ),
+              child: Text(
+                "Forgot Password?",
+                style: AppTypography.bodyLarge.copyWith(
+                  color: AppColors.primary,
+                  fontSize: fontSize,
+                  fontWeight: AppTypography.semiBold,
+                ),
               ),
             ),
           ),
@@ -685,7 +684,7 @@ class LoginView extends GetView<LoginController> {
         borderRadius: AppTheme.getRadius(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: screenWidth >= 1024 ? 16 : 12,
             offset: Offset(0, screenWidth >= 1024 ? 6 : 4),
           ),
@@ -695,12 +694,12 @@ class LoginView extends GetView<LoginController> {
         () => ElevatedButton(
           onPressed: controller.isLoading.value ? null : controller.handleLogin,
           style: AppTheme.primaryButtonStyle.copyWith(
-            shape: MaterialStateProperty.all(
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: AppTheme.getRadius(borderRadius),
               ),
             ),
-            elevation: MaterialStateProperty.all(0),
+            elevation: WidgetStateProperty.all(0),
           ),
           child: controller.isLoading.value
               ? SizedBox(

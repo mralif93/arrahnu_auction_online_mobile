@@ -101,6 +101,13 @@ class AppTypography {
     color: AppColors.textSecondary,
   );
 
+  static TextStyle get labelLarge => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: base,
+    fontWeight: medium,
+    color: AppColors.textSecondary,
+  );
+
   // Button Text Style
   static TextStyle get buttonText => TextStyle(
     fontFamily: fontFamily,

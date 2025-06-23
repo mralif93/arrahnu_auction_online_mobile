@@ -57,31 +57,26 @@ class RegisterView extends GetView<RegisterController> {
             bottom: ResponsivePadding.smallSpacing
           ),
           decoration: BoxDecoration(color: AppColors.background),
-          child: Container(
-            margin: AppTheme.getPadding(horizontal: 16),
-            child: Center(
-              child: Container(
-                height: 80,
-                padding: AppTheme.getPadding(horizontal: 20),
-                child: Image.asset(
-                  'assets/images/logo/001.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 80,
-                      padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: AppTheme.mediumRadius,
-                      ),
-                      child: Icon(
-                        Icons.account_balance,
-                        size: 48,
-                        color: AppColors.primary,
-                      ),
-                    );
-                  },
-                ),
+          child: Center(
+            child: SizedBox(
+              height: 100,
+              child: Image.asset(
+                'assets/images/logo/001.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: AppTheme.mediumRadius,
+                    ),
+                    child: Icon(
+                      Icons.account_balance,
+                      size: 48,
+                      color: AppColors.primary,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -385,10 +380,10 @@ class RegisterView extends GetView<RegisterController> {
     return Container(
       padding: AppTheme.getPadding(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
+        color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: AppTheme.smallRadius,
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.2),
+          color: AppColors.primary.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -415,7 +410,7 @@ class RegisterView extends GetView<RegisterController> {
     required IconData icon,
     required TextInputType keyboardType,
   }) {
-    return Container(
+    return SizedBox(
       height: 48, // Fixed height for consistency
       child: TextFormField(
         controller: controller,
@@ -524,12 +519,12 @@ class RegisterView extends GetView<RegisterController> {
             ? null
             : controller.handleRegister,
         style: AppTheme.primaryButtonStyle.copyWith(
-          padding: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(vertical: 14),
           ),
-          elevation: MaterialStateProperty.all(2),
-          shadowColor: MaterialStateProperty.all(
-            AppColors.primary.withOpacity(0.3),
+          elevation: WidgetStateProperty.all(2),
+          shadowColor: WidgetStateProperty.all(
+            AppColors.primary.withValues(alpha: 0.3),
           ),
         ),
         child: controller.isLoading.value
@@ -619,7 +614,7 @@ class RegisterView extends GetView<RegisterController> {
                   vertical: screenWidth >= 1024 ? 20 : 16
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: AppTheme.getRadius(
                     screenWidth >= 1024 ? 16 : 12,
                   ),
@@ -875,7 +870,7 @@ class RegisterView extends GetView<RegisterController> {
         borderRadius: AppTheme.getRadius(screenWidth >= 1024 ? 16 : 12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: screenWidth >= 1024 ? 16 : 12,
             offset: Offset(0, screenWidth >= 1024 ? 6 : 4),
           ),
@@ -887,12 +882,12 @@ class RegisterView extends GetView<RegisterController> {
               ? null
               : controller.handleRegister,
           style: AppTheme.primaryButtonStyle.copyWith(
-            padding: MaterialStateProperty.all(
+            padding: WidgetStateProperty.all(
               AppTheme.getPadding(
                 vertical: screenWidth >= 1024 ? 18 : 16,
               ),
             ),
-            shape: MaterialStateProperty.all(
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: AppTheme.getRadius(
                   screenWidth >= 1024 ? 16 : 12,
