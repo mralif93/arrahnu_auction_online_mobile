@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import '../models/user.dart';
 import 'branch_accounts_view.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -723,7 +724,7 @@ class HomeView extends GetView<HomeController> {
                         icon: Icons.play_arrow_rounded,
                         iconColor: Colors.green,
                         label: "Auction Started",
-                        value: controller.formattedStartDate,
+                        value: controller.startDate,
                         isCompleted: true,
                       ),
                       const SizedBox(height: 12),
@@ -737,7 +738,7 @@ class HomeView extends GetView<HomeController> {
                         icon: Icons.stop_rounded,
                         iconColor: Colors.green,
                         label: "Auction Ended",
-                        value: controller.formattedEndDate,
+                        value: controller.endDate,
                         isCompleted: true,
                       ),
                     ],
@@ -1092,7 +1093,7 @@ class HomeView extends GetView<HomeController> {
                         icon: Icons.play_arrow_rounded,
                         iconColor: const Color(0xFFFE8000),
                         label: "Auction Starts",
-                        value: controller.formattedStartDate,
+                        value: controller.startDate,
                         isStart: true,
                       ),
                       const SizedBox(height: 12),
@@ -1106,7 +1107,7 @@ class HomeView extends GetView<HomeController> {
                         icon: Icons.stop_rounded,
                         iconColor: Colors.grey.shade600,
                         label: "Auction Ends",
-                        value: controller.formattedEndDate,
+                        value: controller.endDate,
                         isStart: false,
                       ),
                     ],

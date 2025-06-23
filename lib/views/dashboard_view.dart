@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/dashboard_controller.dart';
 import '../models/user.dart';
-import '../services/watchlist_service.dart';
-import '../services/auction_service.dart';
 import '../services/api_service.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -152,19 +150,12 @@ class DashboardView extends GetView<DashboardController> {
                 const SizedBox(height: 4),
                 Obx(
                   () => GestureDetector(
-                    onLongPress: () {
-                      // Hidden API verification trigger
-                      Get.toNamed('/api-verification');
-                    },
                     onTap: () {
-                      // If showing "Loading...", trigger test login
-                      if (controller.userName.value.isEmpty) {
-                        controller.performTestLogin();
-                      }
+                      // Production: handle tap if needed
                     },
                     child: Text(
                       controller.userName.value.isEmpty 
-                          ? "Loading... (Tap to test login)" 
+                          ? "Loading..." 
                           : controller.userName.value,
                       style: const TextStyle(
                         fontFamily: 'Montserrat',
@@ -183,10 +174,6 @@ class DashboardView extends GetView<DashboardController> {
           // Settings Icon
           IconButton(
             onPressed: controller.onSettingsTap,
-            onLongPress: () {
-              // Show API diagnostic dialog
-              _showApiDiagnostic();
-            },
             icon: const Icon(Icons.settings, color: Colors.white, size: 24),
           ),
         ],
@@ -714,7 +701,7 @@ class DashboardView extends GetView<DashboardController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
+                    item.collateralName,
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14,
@@ -736,7 +723,7 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Time left: ${item.timeLeft}",
+                    "Ends: ${item.endTime}",
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12,
@@ -750,75 +737,13 @@ class DashboardView extends GetView<DashboardController> {
 
             // Remove from watchlist button
             IconButton(
-              onPressed: () => controller.removeFromWatchlist(item.auctionId),
+              onPressed: () => controller.removeFromWatchlist(item.id),
               icon: const Icon(Icons.favorite, color: Colors.red, size: 20),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showApiDiagnostic() {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('API Diagnostic'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Base URL: ${ApiService.baseUrl}'),
-              const SizedBox(height: 8),
-              Text('Mock Mode: ${ApiService.useMockMode ? "Enabled" : "Disabled"}'),
-              const SizedBox(height: 8),
-              Text('Login Status: ${controller.storageService.isLoggedIn ? "Logged In" : "Not Logged In"}'),
-              const SizedBox(height: 8),
-              Text('User Name: ${controller.userName.value.isEmpty ? "Empty" : controller.userName.value}'),
-              const SizedBox(height: 16),
-              const Text('Actions:', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                  controller.testApiConnection();
-                },
-                child: const Text('Test API Connection'),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                  controller.performTestLogin();
-                },
-                child: const Text('Perform Test Login'),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  ApiService.useMockMode = !ApiService.useMockMode;
-                  Get.back();
-                  Get.snackbar(
-                    'API Mode',
-                    'Mock mode ${ApiService.useMockMode ? "enabled" : "disabled"}',
-                    backgroundColor: Colors.blue,
-                    colorText: Colors.white,
-                  );
-                },
-                child: Text('Toggle Mock Mode'),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
   }

@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import '../models/user.dart';
-import 'package:flutter/material.dart';
 
 class DashboardController extends GetxController {
   final StorageService _storageService = Get.find<StorageService>();
@@ -11,14 +10,26 @@ class DashboardController extends GetxController {
   final isLoading = false.obs;
   final isLoadingProfile = false.obs;
   final isLoadingStats = false.obs;
+  final isLoadingBids = false.obs;
+  final isLoadingWatchlist = false.obs;
   final user = Rx<User?>(null);
   final errorMessage = ''.obs;
   final userName = ''.obs;
+  
+  // Dashboard stats
+  final activeBids = 0.obs;
+  final watchlistItems = 0.obs;
+  final wonAuctions = 0.obs;
+  
+  // Data lists
+  final recentBids = <UserBid>[].obs;
+  final watchlistAuctions = <WatchlistItem>[].obs;
   
   @override
   void onInit() {
     super.onInit();
     _loadUserFromStorage();
+    // Production: Load real dashboard data here
   }
   
   void _loadUserFromStorage() {
@@ -28,43 +39,28 @@ class DashboardController extends GetxController {
     }
   }
   
-  // Placeholder methods for future implementation
-  Future<void> refreshData() async {
-    debugPrint('🔍 DashboardController: refreshData not implemented');
-  }
-  
-  Future<void> refreshDashboard() async {
-    await refreshData();
-  }
-  
-  void performTestLogin() async {
-    debugPrint('🔍 DashboardController: performTestLogin not implemented');
-  }
-  
-  void onSettingsTap() {
-    debugPrint('🔍 DashboardController: onSettingsTap not implemented');
-  }
-  
-  void onBidItemTap(UserBid bid) {
-    debugPrint('🔍 DashboardController: onBidItemTap not implemented');
-  }
-  
-  void onWatchlistItemTap(WatchlistItem item) {
-    debugPrint('🔍 DashboardController: onWatchlistItemTap not implemented');
-  }
-  
+  // Navigation methods (implement navigation as needed)
+  void onProfileTap() {}
+  void onWalletTap() {}
+  void onBidsHistoryTap() {}
+  void onLogoutTap() {}
+  void onWatchlistTap() {}
+  void onSettingsTap() {}
+  void onBidItemTap(UserBid bid) {}
+  void onWatchlistItemTap(WatchlistItem item) {}
+
   void removeFromWatchlist(String auctionId) {
-    debugPrint('🔍 DashboardController: removeFromWatchlist not implemented');
+    watchlistAuctions.removeWhere((item) => item.id == auctionId);
+    // Optionally update stats if needed
   }
-  
+
   String formatCurrency(double amount) {
     return 'RM ${amount.toStringAsFixed(2)}';
   }
-  
+
   String formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {
@@ -75,7 +71,7 @@ class DashboardController extends GetxController {
       return 'Just now';
     }
   }
-  
+
   Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'winning':
@@ -88,11 +84,10 @@ class DashboardController extends GetxController {
         return Colors.grey;
     }
   }
-  
+
   String getStatusText(String status) {
     return status.toUpperCase();
   }
-  
-  // Get storage service reference
+
   StorageService get storageService => _storageService;
 }
