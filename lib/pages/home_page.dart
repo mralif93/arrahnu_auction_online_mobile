@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_typography.dart';
 import '../utils/app_theme.dart';
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final HomeController homeController = Get.put(HomeController());
   String selectedCategory = "All Items";
 
   final List<String> categories = [
@@ -66,21 +69,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(screenWidth),
-              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
-              _buildCategoryFilter(screenWidth),
-              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
-              _buildFeaturedAuctions(screenWidth),
-              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
-              _buildLiveAuctionCard(screenWidth),
-              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
-              _buildUpcomingAuctions(screenWidth),
-              SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
-            ],
+        child: RefreshIndicator(
+          onRefresh: () => homeController.refreshData(),
+          color: AppColors.primary,
+          backgroundColor: AppColors.surface,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(screenWidth),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+                _buildCategoryFilter(screenWidth),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+                _buildFeaturedAuctions(screenWidth),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+                _buildLiveAuctionCard(screenWidth),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+                _buildUpcomingAuctions(screenWidth),
+                SizedBox(height: ResponsivePadding.getSectionSpacing(screenWidth)),
+              ],
+            ),
           ),
         ),
       ),

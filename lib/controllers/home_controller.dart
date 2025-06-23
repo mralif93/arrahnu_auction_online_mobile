@@ -9,6 +9,20 @@ class HomeController extends GetxController {
   var searchQuery = ''.obs;
   var isLoading = false.obs;
 
+  // Refresh method for pull-to-refresh
+  Future<void> refreshData() async {
+    isLoading.value = true;
+    try {
+      // Simulate API call delay
+      await Future.delayed(const Duration(seconds: 1));
+      // In a real app, you would fetch fresh data from your API here
+      // For now, we'll just simulate a refresh
+      update();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // Auction session state
   var auctionStatus = AuctionStatus.beforeStart.obs;
   var timeRemaining = ''.obs;
@@ -18,14 +32,14 @@ class HomeController extends GetxController {
   final DateTime auctionStartDate = DateTime(
     2025,
     6,
-    5,
+    24,
     10,
     30,
   ); // 05/06/2025 10:30 a.m.
   final DateTime auctionEndDate = DateTime(
     2025,
     6,
-    9,
+    28,
     16,
     30,
   ); // 09/06/2025 04:30 p.m.
