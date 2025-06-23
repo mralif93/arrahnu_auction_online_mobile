@@ -1,29 +1,41 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../models/user.dart';
 import '../services/storage_service.dart';
+import '../models/user.dart';
 
 class ProfileController extends GetxController {
   final StorageService _storageService = Get.find<StorageService>();
   
+  // Form controllers
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final icNumberController = TextEditingController();
+  final address1Controller = TextEditingController();
+  final address2Controller = TextEditingController();
+  final address3Controller = TextEditingController();
+  final postcodeController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final countryController = TextEditingController();
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  
   // Observable variables
   final isLoading = false.obs;
   final isLoadingProfile = false.obs;
+  final isSaving = false.obs;
+  final isChangingPassword = false.obs;
   final errorMessage = ''.obs;
   final successMessage = ''.obs;
   final userProfile = Rx<User?>(null);
   final isVerified = false.obs;
   
-  // Password change controllers
-  final currentPasswordController = TextEditingController();
-  final newPasswordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  
   // Password visibility
   final isCurrentPasswordVisible = false.obs;
   final isNewPasswordVisible = false.obs;
   final isConfirmPasswordVisible = false.obs;
-  final isChangingPassword = false.obs;
   
   // Form fields
   final fullName = ''.obs;
@@ -45,86 +57,191 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadUserFromStorage();
+    loadUserProfile();
   }
-
+  
   @override
   void onClose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    icNumberController.dispose();
+    address1Controller.dispose();
+    address2Controller.dispose();
+    address3Controller.dispose();
+    postcodeController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    countryController.dispose();
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmPasswordController.dispose();
     super.onClose();
   }
-
-  void _loadUserFromStorage() {
-    final storedUser = _storageService.getUser();
-    if (storedUser != null) {
-      userProfile.value = storedUser;
-      isVerified.value = storedUser.isVerified;
-    }
-  }
   
-  // Placeholder methods for future implementation
-  Future<void> loadProfile() async {
-    // Implementation needed
-  }
-  
-  Future<void> updateProfile() async {
-    // Implementation needed
-  }
-  
-  Future<void> uploadAvatar() async {
-    // Implementation needed
-  }
-  
-  Future<void> removeAvatar() async {
-    // Implementation needed
-  }
-  
-  Future<void> changePassword(String current, String newPassword, String confirm) async {
-    // Implementation needed
-  }
-
-  // Change password with controllers
-  Future<void> changePasswordFromForm() async {
-    final current = currentPasswordController.text.trim();
-    final newPassword = newPasswordController.text.trim();
-    final confirm = confirmPasswordController.text.trim();
-    
-    await changePassword(current, newPassword, confirm);
-  }
-
-  // Navigation methods
-  void goBack() {
-    Get.back();
-  }
-
   Future<void> loadUserProfile() async {
     isLoadingProfile.value = true;
     errorMessage.value = '';
     
     try {
-      // Simulate loading user profile
-      await Future.delayed(const Duration(seconds: 1));
-      _loadUserFromStorage(); // Reload from storage
+      final userData = _storageService.getUser();
+      if (userData != null) {
+        userProfile.value = User.fromJson(userData);
+        isVerified.value = userProfile.value?.isVerified ?? false;
+        _populateFormFields();
+      }
     } catch (e) {
-      errorMessage.value = 'Failed to load user profile';
-    } finally {
-      isLoadingProfile.value = false;
+      errorMessage.value = 'Failed to load profile data';
+      print('Error loading profile: $e');
+    }
+    
+    isLoadingProfile.value = false;
+  }
+  
+  void _populateFormFields() {
+    if (userProfile.value != null) {
+      fullName.value = userProfile.value!.fullName;
+      email.value = userProfile.value!.email;
+      phoneNumber.value = userProfile.value?.phoneNumber ?? '';
+      dateOfBirth.value = userProfile.value?.dateOfBirth ?? '';
+      gender.value = userProfile.value?.gender ?? '';
+      nationality.value = userProfile.value?.nationality ?? '';
+      occupation.value = userProfile.value?.occupation ?? '';
+      icNumber.value = userProfile.value?.icNumber ?? '';
+      address1.value = userProfile.value?.address1 ?? '';
+      address2.value = userProfile.value?.address2 ?? '';
+      address3.value = userProfile.value?.address3 ?? '';
+      postcode.value = userProfile.value?.postcode ?? '';
+      city.value = userProfile.value?.city ?? '';
+      state.value = userProfile.value?.state ?? '';
+      country.value = userProfile.value?.country ?? '';
     }
   }
-
+  
+  Future<void> updateProfile() async {
+    if (!validateForm()) return;
+    
+    isSaving.value = true;
+    errorMessage.value = '';
+    successMessage.value = '';
+    
+    try {
+      // Create updated profile data
+      final updatedData = {
+        ...userProfile.value?.toJson() ?? {},
+        'full_name': fullName.value,
+        'email': email.value,
+        'phone_number': phoneNumber.value,
+        'date_of_birth': dateOfBirth.value,
+        'gender': gender.value,
+        'nationality': nationality.value,
+        'occupation': occupation.value,
+        'ic_number': icNumber.value,
+        'address1': address1.value,
+        'address2': address2.value,
+        'address3': address3.value,
+        'postcode': postcode.value,
+        'city': city.value,
+        'state': state.value,
+        'country': country.value,
+      };
+      
+      // Save to storage
+      await _storageService.saveUser(updatedData);
+      userProfile.value = User.fromJson(updatedData);
+      successMessage.value = 'Profile updated successfully';
+      
+      // Simulate API delay
+      await Future.delayed(const Duration(seconds: 1));
+      
+    } catch (e) {
+      errorMessage.value = 'Failed to update profile';
+      print('Error updating profile: $e');
+    }
+    
+    isSaving.value = false;
+  }
+  
+  Future<void> changePasswordFromForm() async {
+    if (!validatePasswordForm()) return;
+    
+    isChangingPassword.value = true;
+    errorMessage.value = '';
+    successMessage.value = '';
+    
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
+      successMessage.value = 'Password changed successfully';
+      
+      // Clear password fields
+      currentPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+    } catch (e) {
+      errorMessage.value = 'Failed to change password';
+      print('Error changing password: $e');
+    }
+    
+    isChangingPassword.value = false;
+  }
+  
+  bool validateForm() {
+    if (fullName.value.isEmpty || email.value.isEmpty || !GetUtils.isEmail(email.value)) {
+      errorMessage.value = 'Please fill in all required fields correctly';
+      return false;
+    }
+    return true;
+  }
+  
+  bool validatePasswordForm() {
+    final currentPassword = currentPasswordController.text;
+    final newPassword = newPasswordController.text;
+    final confirmPassword = confirmPasswordController.text;
+    
+    if (currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      errorMessage.value = 'Please fill in all password fields';
+      return false;
+    }
+    
+    if (newPassword != confirmPassword) {
+      errorMessage.value = 'New passwords do not match';
+      return false;
+    }
+    
+    if (newPassword.length < 8) {
+      errorMessage.value = 'Password must be at least 8 characters long';
+      return false;
+    }
+    
+    return true;
+  }
+  
+  void toggleCurrentPasswordVisibility() {
+    isCurrentPasswordVisible.value = !isCurrentPasswordVisible.value;
+  }
+  
+  void toggleNewPasswordVisibility() {
+    isNewPasswordVisible.value = !isNewPasswordVisible.value;
+  }
+  
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+  
+  void goBack() {
+    Get.back();
+  }
+  
   void goToUpdateProfile() {
     Get.toNamed('/update-profile');
   }
-
-  // Format balance for display
+  
   String formatBalance(double? balance) {
     if (balance == null) return 'RM 0.00';
     return 'RM ${balance.toStringAsFixed(2)}';
   }
-
-  // Format member since date
+  
   String formatMemberSince(String? createdAt) {
     if (createdAt == null) return 'Unknown';
     try {
@@ -136,18 +253,22 @@ class ProfileController extends GetxController {
       return 'Unknown';
     }
   }
-
-  // Password visibility toggles
-  void toggleCurrentPasswordVisibility() {
-    isCurrentPasswordVisible.value = !isCurrentPasswordVisible.value;
+  
+  void clearMessages() {
+    errorMessage.value = '';
+    successMessage.value = '';
   }
-
-  void toggleNewPasswordVisibility() {
-    isNewPasswordVisible.value = !isNewPasswordVisible.value;
+  
+  Future<void> uploadAvatar() async {
+    // Dummy implementation
+    await Future.delayed(const Duration(seconds: 1));
+    successMessage.value = 'Avatar uploaded successfully';
   }
-
-  void toggleConfirmPasswordVisibility() {
-    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  
+  Future<void> removeAvatar() async {
+    // Dummy implementation
+    await Future.delayed(const Duration(seconds: 1));
+    successMessage.value = 'Avatar removed successfully';
   }
 }
 

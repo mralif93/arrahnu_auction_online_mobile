@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'account_controller.dart';
-import '../services/auth_service.dart';
 import '../services/storage_service.dart';
-import '../models/user.dart';
-
-
 
 class LoginController extends GetxController {
   // Text editing controllers
@@ -20,13 +16,20 @@ class LoginController extends GetxController {
 
   // Services
   final StorageService _storageService = Get.find<StorageService>();
-  final AuthService _authService = AuthService();
 
   @override
   void onInit() {
     super.onInit();
-    // Load remember me preference
+    // Load remember me state
     rememberMe.value = _storageService.getRememberMe();
+    
+    // Load saved email if remember me is enabled
+    if (rememberMe.value) {
+      final userData = _storageService.getUser();
+      if (userData != null && userData['email'] != null) {
+        emailController.text = userData['email'];
+      }
+    }
   }
 
   @override
@@ -43,7 +46,7 @@ class LoginController extends GetxController {
 
   void toggleRememberMe(bool? value) {
     rememberMe.value = value ?? false;
-    _storageService.setRememberMe(rememberMe.value);
+    _storageService.saveRememberMe(rememberMe.value);
   }
 
   void onForgotPasswordTap() {
@@ -60,85 +63,53 @@ class LoginController extends GetxController {
   }
 
   Future<void> handleLogin() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      errorMessage.value = 'Please fill all fields';
+    if (isLoading.value) return;
+    
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    
+    // Validate input
+    if (email.isEmpty || !GetUtils.isEmail(email)) {
+      errorMessage.value = 'Please enter a valid email address';
       return;
     }
-
+    
+    if (password.isEmpty || password.length < 6) {
+      errorMessage.value = 'Password must be at least 6 characters';
+      return;
+    }
+    
     isLoading.value = true;
     errorMessage.value = '';
-
+    
     try {
-      final result = await _authService.login(
-        emailController.text,
-        passwordController.text,
-      );
-
-      if (result.success && result.user != null) {
-        // Login success
-        await _completeLogin(result.user!, result.token);
-      } else {
-        final error = result.error ?? 'Login failed';
-        errorMessage.value = error;
-        
-        // Handle email verification needed
-        if (result.needsEmailVerification) {
-          _navigateToEmailVerification();
-        } else {
-          // Show snackbar for other errors
-          Get.snackbar(
-            'Login Failed',
-            error,
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-      }
-    } catch (e) {
-      final error = 'An unexpected error occurred: $e';
-      errorMessage.value = error;
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
       
-      // Show snackbar for immediate feedback
+      // Dummy successful login
+      final userData = {
+        'id': '12345',
+        'email': email,
+        'fullName': 'John Doe',
+        'isEmailVerified': true,
+      };
+      
+      // Save user data
+      await _storageService.saveUser(userData);
+      
+      // Navigate to home
+      Get.offAllNamed('/home');
+    } catch (e) {
+      errorMessage.value = 'Invalid email or password';
       Get.snackbar(
         'Error',
-        error,
-        snackPosition: SnackPosition.TOP,
+        'Invalid email or password',
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void _navigateToEmailVerification() {
-    Get.toNamed('/email-verification', arguments: {
-      'email': emailController.text,
-    });
-  }
-
-  Future<void> _completeLogin(User user, String? token) async {
-    // Save user data (token is already saved by AuthService)
-    await _storageService.saveUser(user);
-    
-    // Save token if provided (for backwards compatibility with storage service)
-    if (token != null) {
-      await _storageService.saveAuthToken(token);
-    }
-
-    // Show success message
-    Get.snackbar(
-      'Login Successful',
-      'Welcome back! You have been logged in successfully.',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green.withValues(alpha: 0.9),
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
-
-    // Show dashboard in Account tab
-    final accountController = Get.find<AccountController>();
-    accountController.showDashboard();
   }
 }

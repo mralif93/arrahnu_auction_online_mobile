@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'account_controller.dart';
-import '../services/auth_service.dart';
-import '../models/auth_models.dart';
 
 class RegisterController extends GetxController {
   // Text editing controllers
@@ -26,9 +24,6 @@ class RegisterController extends GetxController {
   var agreeToTerms = false.obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-
-  // Services
-  final AuthService _authService = AuthService();
 
   @override
   void onClose() {
@@ -63,7 +58,22 @@ class RegisterController extends GetxController {
 
   void onTermsAndConditionsTap() {
     // Show terms and conditions
-    // TODO: Implement terms and conditions display
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Terms and Conditions'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'This is a dummy terms and conditions text. In a real app, this would contain the actual terms and conditions.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onSignInTap() {
@@ -101,68 +111,36 @@ class RegisterController extends GetxController {
     errorMessage.value = '';
 
     try {
-      final request = RegisterRequest(
-        fullName: fullNameController.text,
-        username: fullNameController.text.toLowerCase().replaceAll(' ', ''),
-        email: emailController.text,
-        password: passwordController.text,
-        passwordConfirmation: confirmPasswordController.text,
-        phoneNumber: phoneController.text.isNotEmpty ? phoneController.text : null,
-      );
+      // Simulate API call delay
+      await Future.delayed(const Duration(seconds: 2));
 
-      final result = await _authService.register(request);
-
-      if (result.success && result.user != null) {
-        
-        // Show success message with proper instructions
-        String successMessage = 'Account created successfully!';
-        
-        // Check if email verification is required
-        if (result.user!.status == 'pending_approval') {
-          successMessage = 'Account created successfully!\n\nPlease check your email to verify your account. After email verification, your account will be reviewed by our administrators.';
-        }
-        
-        Get.dialog(
-          AlertDialog(
-            title: const Text('Registration Successful'),
-            content: Text(successMessage),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Get.back(); // Close dialog
-                  // Navigate to login page
-                  final accountController = Get.find<AccountController>();
-                  accountController.showLoginPage();
-                  // Clear form
-                  _clearForm();
-                },
-                child: const Text('OK'),
-              ),
-            ],
+      // Show success message
+      Get.dialog(
+        AlertDialog(
+          title: const Text('Registration Successful'),
+          content: const Text(
+            'Account created successfully!\n\nPlease check your email to verify your account.',
           ),
-        );
-      } else {
-        final error = result.error ?? 'Registration failed';
-        errorMessage.value = error;
-        
-        // Also show snackbar for immediate feedback
-        Get.snackbar(
-          'Registration Failed',
-          error,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 5),
-        );
-      }
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(); // Close dialog
+                // Navigate to login page
+                final accountController = Get.find<AccountController>();
+                accountController.showLoginPage();
+                // Clear form
+                _clearForm();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } catch (e) {
-      final error = 'An unexpected error occurred: $e';
-      errorMessage.value = error;
-      
-      // Show snackbar for immediate feedback
+      errorMessage.value = 'An unexpected error occurred';
       Get.snackbar(
         'Error',
-        error,
+        'An unexpected error occurred',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

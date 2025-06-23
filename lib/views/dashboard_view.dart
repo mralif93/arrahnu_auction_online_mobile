@@ -567,94 +567,106 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildBidCard(UserBid bid) {
+  Widget _buildBidCard(Map<String, dynamic> bid) {
     return GestureDetector(
       onTap: () => controller.onBidItemTap(bid),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
-            // Item Image Placeholder
+            // Item Image
             Container(
-              width: 50,
-              height: 50,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: AssetImage(bid['itemImage'] ?? 'assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: const Icon(Icons.gavel, color: Colors.grey),
             ),
-
             const SizedBox(width: 12),
-
-            // Item Details
+            
+            // Bid Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    bid.auctionTitle,
+                    bid['itemTitle'] ?? 'Unknown Item',
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Your bid: ${controller.formatCurrency(bid.bidAmount)}",
-                    style: TextStyle(
+                    controller.formatCurrency(bid['amount'] ?? 0.0),
+                    style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    controller.formatTimeAgo(DateTime.parse(bid.bidTime)),
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: controller.getStatusColor(bid['status'] ?? ''),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          (bid['status'] ?? '').toUpperCase(),
+                          style: const TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        controller.formatTimeAgo(bid['createdAt'] ?? ''),
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-
-            // Status Badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: controller.getStatusColor(bid.status),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                controller.getStatusText(bid.status),
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+            
+            // Arrow Icon
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
             ),
           ],
         ),
@@ -662,84 +674,106 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildWatchlistCard(WatchlistItem item) {
+  Widget _buildWatchlistCard(Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () => controller.onWatchlistItemTap(item),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
-            // Item Image Placeholder
+            // Item Image
             Container(
-              width: 50,
-              height: 50,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: AssetImage(item['image'] ?? 'assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: const Icon(Icons.image, color: Colors.grey),
             ),
-
             const SizedBox(width: 12),
-
+            
             // Item Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.collateralName,
+                    item['title'] ?? 'Unknown Item',
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Current: ${controller.formatCurrency(item.currentBid)}",
-                    style: TextStyle(
+                    controller.formatCurrency(item['currentBid'] ?? 0.0),
+                    style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    "Ends: ${item.endTime}",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: controller.getStatusColor(item['status'] ?? ''),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          (item['status'] ?? '').toUpperCase(),
+                          style: const TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        controller.formatTimeLeft(item['endTime'] ?? ''),
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-
-            // Remove from watchlist button
-            IconButton(
-              onPressed: () => controller.removeFromWatchlist(item.id),
-              icon: const Icon(Icons.favorite, color: Colors.red, size: 20),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+            
+            // Arrow Icon
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
             ),
           ],
         ),

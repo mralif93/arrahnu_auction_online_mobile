@@ -4,111 +4,104 @@ import 'package:get_storage/get_storage.dart';
 import '../models/user.dart';
 
 class StorageService extends GetxService {
-  static const String _tokenKey = 'auth_token';
-  static const String _refreshTokenKey = 'refresh_token';
+  final _box = GetStorage();
+
+  // Keys
+  static const String _authTokenKey = 'auth_token';
   static const String _userKey = 'user_data';
   static const String _rememberMeKey = 'remember_me';
+  static const String _refreshTokenKey = 'refresh_token';
   static const String _selectedCategoryKey = 'selected_category';
   static const String _searchHistoryKey = 'search_history';
 
-  // Initialize storage service
-  static Future<StorageService> init() async {
+  // Initialize storage
+  Future<StorageService> init() async {
     await GetStorage.init();
-    final service = StorageService();
-    return service;
+    return this;
   }
 
-  // Token management
+  // Auth token methods
   Future<void> saveAuthToken(String token) async {
-    await GetStorage().write(_tokenKey, token);
+    await _box.write(_authTokenKey, token);
   }
 
-  Future<void> saveRefreshToken(String refreshToken) async {
-    await GetStorage().write(_refreshTokenKey, refreshToken);
+  Future<void> removeAuthToken() async {
+    await _box.remove(_authTokenKey);
   }
 
   String? getAuthToken() {
-    return GetStorage().read(_tokenKey);
+    return _box.read(_authTokenKey);
   }
 
-  String? getRefreshToken() {
-    return GetStorage().read(_refreshTokenKey);
+  // User methods
+  Future<void> saveUser(Map<String, dynamic> userData) async {
+    await _box.write(_userKey, jsonEncode(userData));
   }
 
-  Future<void> clearAuthTokens() async {
-    await GetStorage().remove(_tokenKey);
-    await GetStorage().remove(_refreshTokenKey);
+  Future<void> removeUser() async {
+    await _box.remove(_userKey);
   }
 
-  // User data management
-  Future<void> saveUser(User user) async {
-    await GetStorage().write(_userKey, json.encode(user.toJson()));
-  }
-
-  User? getUser() {
-    final userData = GetStorage().read(_userKey);
+  Map<String, dynamic>? getUser() {
+    final userData = _box.read(_userKey);
     if (userData != null) {
       try {
-        final userMap = json.decode(userData) as Map<String, dynamic>;
-        return User.fromJson(userMap);
+        return jsonDecode(userData);
       } catch (e) {
-        // Handle error silently
+        print('Error decoding user data: $e');
         return null;
       }
     }
     return null;
   }
 
-  Future<void> clearUser() async {
-    await GetStorage().remove(_userKey);
-  }
-
-  // Remember me preference
-  Future<void> setRememberMe(bool rememberMe) async {
-    await GetStorage().write(_rememberMeKey, rememberMe);
+  // Remember me methods
+  Future<void> saveRememberMe(bool value) async {
+    await _box.write(_rememberMeKey, value);
   }
 
   bool getRememberMe() {
-    return GetStorage().read(_rememberMeKey) ?? false;
+    return _box.read(_rememberMeKey) ?? false;
+  }
+
+  // Refresh token methods
+  Future<void> saveRefreshToken(String token) async {
+    await _box.write(_refreshTokenKey, token);
+  }
+
+  String? getRefreshToken() {
+    return _box.read(_refreshTokenKey);
   }
 
   // Category preference
   Future<void> saveSelectedCategory(String category) async {
-    await GetStorage().write(_selectedCategoryKey, category);
+    await _box.write(_selectedCategoryKey, category);
   }
 
   String getSelectedCategory() {
-    return GetStorage().read(_selectedCategoryKey) ?? 'All';
+    return _box.read(_selectedCategoryKey) ?? 'All';
   }
 
   // Search history
-  Future<void> addSearchHistory(String searchTerm) async {
-    if (searchTerm.trim().isEmpty) return;
-    
-    List<String> history = getSearchHistory();
-    
-    // Remove if already exists to avoid duplicates
-    history.remove(searchTerm);
-    
-    // Add to beginning
-    history.insert(0, searchTerm);
-    
-    // Keep only last 10 searches
-    if (history.length > 10) {
-      history = history.take(10).toList();
+  Future<void> addToSearchHistory(String query) async {
+    final history = getSearchHistory();
+    if (!history.contains(query)) {
+      history.insert(0, query);
+      if (history.length > 10) {
+        history.removeLast();
+      }
+      await _box.write(_searchHistoryKey, json.encode(history));
     }
-    
-    await GetStorage().write(_searchHistoryKey, json.encode(history));
   }
 
   List<String> getSearchHistory() {
-    final historyData = GetStorage().read(_searchHistoryKey);
+    final historyData = _box.read(_searchHistoryKey);
     if (historyData != null) {
       try {
-        final List<dynamic> historyList = json.decode(historyData);
-        return historyList.map((item) => item.toString()).toList();
+        final List<dynamic> decoded = json.decode(historyData);
+        return decoded.cast<String>();
       } catch (e) {
-        // Handle error silently
+        print('Error decoding search history: $e');
         return [];
       }
     }
@@ -116,7 +109,7 @@ class StorageService extends GetxService {
   }
 
   Future<void> clearSearchHistory() async {
-    await GetStorage().remove(_searchHistoryKey);
+    await _box.remove(_searchHistoryKey);
   }
 
   // Check if user is logged in
@@ -128,21 +121,35 @@ class StorageService extends GetxService {
     return loggedIn;
   }
 
-  // Clear all stored data (logout)
+  // Clear all data
   Future<void> clearAll() async {
-    await clearAuthTokens();
-    await clearUser();
-    // Keep preferences like remember me and search history
+    await _box.erase();
   }
 
   // App preferences
   Future<void> saveAppPreferences(Map<String, dynamic> preferences) async {
     for (final entry in preferences.entries) {
-      await GetStorage().write('pref_${entry.key}', entry.value);
+      await _box.write('pref_${entry.key}', entry.value);
     }
   }
 
   T? getAppPreference<T>(String key, {T? defaultValue}) {
-    return GetStorage().read('pref_$key') ?? defaultValue;
+    return _box.read('pref_$key') ?? defaultValue;
+  }
+
+  // Clear user data
+  Future<void> clearUser() async {
+    await _box.remove(_userKey);
+    await _box.remove(_authTokenKey);
+    await _box.remove(_refreshTokenKey);
+  }
+
+  // Preference methods
+  Future<void> savePreference(String key, dynamic value) async {
+    await _box.write('pref_$key', value);
+  }
+
+  T? getPreference<T>(String key, T defaultValue) {
+    return _box.read('pref_$key') ?? defaultValue;
   }
 } 
