@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
   # GetX for state management and navigation
-  get: ^4.7.2
+  get: ^4.6.6
 
   # Google Fonts for Tailwind CSS-like typography
   google_fonts: ^6.1.0
@@ -41,11 +41,11 @@ dependencies:
   path_provider: ^2.1.1
 
   # HTTP for API requests
-  http: ^1.4.0
+  http: ^1.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
