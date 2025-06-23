@@ -12,7 +12,6 @@ class WatchlistService {
 
   // Placeholder for future implementation
   static Future<ApiResponse<WatchlistResponse>> getWatchlist([String? token]) async {
-    debugPrint('🔍 WatchlistService: getWatchlist not implemented');
     return ApiResponse.error('Watchlist service not implemented');
   }
 } 

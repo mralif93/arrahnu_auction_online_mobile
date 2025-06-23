@@ -14,7 +14,6 @@ class ForgotPasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    debugPrint('🔍 ForgotPasswordController initialized');
   }
 
   @override
@@ -33,10 +32,8 @@ class ForgotPasswordController extends GetxController {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
       successMessage.value = 'Password reset email sent to $email';
-      debugPrint('🔍 ForgotPasswordController: sendResetPasswordEmail not implemented');
     } catch (e) {
       errorMessage.value = 'Failed to send password reset email';
-      debugPrint('🚨 ForgotPasswordController: Error sending reset email: $e');
     } finally {
       isLoading.value = false;
     }
@@ -51,10 +48,8 @@ class ForgotPasswordController extends GetxController {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
       successMessage.value = 'Password reset successfully';
-      debugPrint('🔍 ForgotPasswordController: resetPassword not implemented');
     } catch (e) {
       errorMessage.value = 'Failed to reset password';
-      debugPrint('🚨 ForgotPasswordController: Error resetting password: $e');
     } finally {
       isLoading.value = false;
     }

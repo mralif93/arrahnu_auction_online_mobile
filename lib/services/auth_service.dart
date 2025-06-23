@@ -39,9 +39,6 @@ class AuthService {
         await _storageService.saveAuthToken(token);
         await _storageService.saveUser(user);
         
-        debugPrint('🔍 AuthService: Login successful for ${user.fullName}');
-        debugPrint('🔍 AuthService: Token saved: ${token.substring(0, 10)}...');
-        
         return AuthResult.success(user, token);
       } else if (response.statusCode == 403) {
         // Handle email verification and approval status
@@ -75,16 +72,12 @@ class AuthService {
         return AuthResult.failure(data['message'] ?? 'Login failed');
       }
     } on SocketException {
-      debugPrint('🚨 Network Error: No internet connection');
       return AuthResult.failure('No internet connection');
     } on HttpException catch (e) {
-      debugPrint('🚨 HTTP Error: ${e.message}');
       return AuthResult.failure('Network error: ${e.message}');
     } on FormatException {
-      debugPrint('🚨 Format Error: Invalid response format');
       return AuthResult.failure('Invalid response format');
     } catch (e) {
-      debugPrint('🚨 Login error: $e');
       return AuthResult.failure('Network error: $e');
     }
   }
@@ -152,10 +145,8 @@ class AuthService {
       }
       
       await _storageService.clearAll();
-      debugPrint('🔍 AuthService: Logout successful, all data cleared');
       return true;
     } catch (e) {
-      debugPrint('🚨 Logout error: $e');
       await _storageService.clearAll();
       return false;
     }

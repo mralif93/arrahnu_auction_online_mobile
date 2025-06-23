@@ -12,7 +12,6 @@ import 'controllers/profile_controller.dart';
 import 'pages/forgot_password_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/update_profile_page.dart';
-import 'pages/api_verification_page.dart';
 import 'services/storage_service.dart';
 import 'services/auth_service.dart';
 
@@ -161,10 +160,6 @@ class MyApp extends StatelessWidget {
               Get.lazyPut(() => ProfileController());
             }
           }),
-        ),
-        GetPage(
-          name: '/api-verification',
-          page: () => const ApiVerificationPage(),
         ),
       ],
       initialBinding: BindingsBuilder(() {

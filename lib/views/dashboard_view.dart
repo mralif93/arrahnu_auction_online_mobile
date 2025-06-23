@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/dashboard_controller.dart';
 import '../models/user.dart';
-import '../services/api_service.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});

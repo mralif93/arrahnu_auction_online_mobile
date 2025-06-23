@@ -49,6 +49,12 @@ class DashboardController extends GetxController {
   void onBidItemTap(UserBid bid) {}
   void onWatchlistItemTap(WatchlistItem item) {}
 
+  // Refresh methods
+  Future<void> refreshDashboard() async {
+    // Production: Implement dashboard refresh logic here
+    // For example: reload user data, refresh stats, etc.
+  }
+
   void removeFromWatchlist(String auctionId) {
     watchlistAuctions.removeWhere((item) => item.id == auctionId);
     // Optionally update stats if needed

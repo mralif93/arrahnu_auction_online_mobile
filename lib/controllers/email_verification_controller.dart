@@ -15,7 +15,6 @@ class EmailVerificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    debugPrint('🔍 EmailVerificationController initialized');
   }
 
   @override
@@ -34,10 +33,8 @@ class EmailVerificationController extends GetxController {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
       successMessage.value = 'Verification email sent to $email';
-      debugPrint('🔍 EmailVerificationController: resendVerificationEmail not implemented');
     } catch (e) {
       errorMessage.value = 'Failed to send verification email';
-      debugPrint('🚨 EmailVerificationController: Error sending verification email: $e');
     } finally {
       isLoading.value = false;
     }
@@ -52,10 +49,8 @@ class EmailVerificationController extends GetxController {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
       successMessage.value = 'Email verified successfully';
-      debugPrint('🔍 EmailVerificationController: verifyEmail not implemented');
     } catch (e) {
       errorMessage.value = 'Failed to verify email';
-      debugPrint('🚨 EmailVerificationController: Error verifying email: $e');
     } finally {
       isLoading.value = false;
     }

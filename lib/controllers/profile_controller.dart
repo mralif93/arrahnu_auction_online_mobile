@@ -47,7 +47,6 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     _loadUserFromStorage();
-    debugPrint('🔍 ProfileController initialized');
   }
 
   @override
@@ -68,23 +67,23 @@ class ProfileController extends GetxController {
   
   // Placeholder methods for future implementation
   Future<void> loadProfile() async {
-    debugPrint('🔍 ProfileController: loadProfile not implemented');
+    // Implementation needed
   }
   
   Future<void> updateProfile() async {
-    debugPrint('🔍 ProfileController: updateProfile not implemented');
+    // Implementation needed
   }
   
   Future<void> uploadAvatar() async {
-    debugPrint('🔍 ProfileController: uploadAvatar not implemented');
+    // Implementation needed
   }
   
   Future<void> removeAvatar() async {
-    debugPrint('🔍 ProfileController: removeAvatar not implemented');
+    // Implementation needed
   }
   
   Future<void> changePassword(String current, String newPassword, String confirm) async {
-    debugPrint('🔍 ProfileController: changePassword not implemented');
+    // Implementation needed
   }
 
   // Change password with controllers
@@ -109,10 +108,8 @@ class ProfileController extends GetxController {
       // Simulate loading user profile
       await Future.delayed(const Duration(seconds: 1));
       _loadUserFromStorage(); // Reload from storage
-      debugPrint('🔍 ProfileController: loadUserProfile not implemented');
     } catch (e) {
       errorMessage.value = 'Failed to load user profile';
-      debugPrint('🚨 ProfileController: Error loading profile: $e');
     } finally {
       isLoadingProfile.value = false;
     }

@@ -126,11 +126,6 @@ class StorageService extends GetxService {
     final user = getUser();
     final loggedIn = token != null && token.isNotEmpty && user != null;
     
-    debugPrint('🔍 StorageService.isLoggedIn check:');
-    debugPrint('  - Token: ${token != null ? "Present (${token.length} chars)" : "NULL"}');
-    debugPrint('  - User: ${user != null ? "Present (${user.fullName})" : "NULL"}');
-    debugPrint('  - Result: $loggedIn');
-    
     return loggedIn;
   }
 

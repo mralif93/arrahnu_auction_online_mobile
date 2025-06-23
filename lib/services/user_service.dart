@@ -18,8 +18,6 @@ class UserService {
 
   // Get basic user profile (AuthController) - minimal implementation for login/register
   static Future<ApiResponse<UserProfileResponse>> getBasicUserProfile(String token) async {
-    debugPrint('🔍 UserService: Getting basic user profile with token');
-    
     final response = await ApiService.get<Map<String, dynamic>>(
       _authProfileEndpoint,
       token: token,
@@ -68,19 +66,15 @@ class UserService {
           profileCompletion: profileCompletion,
         );
         
-        debugPrint('🔍 UserService: Basic profile loaded successfully for ${userProfile.fullName}');
-        
         // Update user in storage service
         final user = _convertToUser(userProfile);
         _storageService.saveUser(user);
         
         return ApiResponse.success(profileResponse);
       } catch (e) {
-        debugPrint('🚨 UserService: Error parsing basic profile data: $e');
         return ApiResponse.error('Error parsing profile data: $e');
       }
     } else {
-      debugPrint('🚨 UserService: Failed to fetch basic user profile: ${response.error}');
       return ApiResponse.error(response.error ?? 'Failed to fetch user profile');
     }
   }
