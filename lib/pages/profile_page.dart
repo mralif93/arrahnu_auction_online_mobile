@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
-import '../models/user.dart';
-import '../services/storage_service.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_typography.dart';
 import '../utils/responsive_padding.dart';

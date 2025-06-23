@@ -1,13 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'api_service.dart';
-import 'watchlist_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'storage_service.dart';
 import '../models/user.dart';
-import '../config/api_config.dart';
+import 'api_service.dart';
+import 'storage_service.dart';
 
 class UserService {
   // Basic auth endpoints - keeping only login/register related

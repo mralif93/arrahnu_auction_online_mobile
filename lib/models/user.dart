@@ -467,20 +467,4 @@ class AuctionItem {
   });
 }
 
-enum AuctionStatus { beforeStart, active, ended }
-
-class TestResult {
-  final String name;
-  final String endpoint;
-  final String method;
-  final bool success;
-  final String message;
-  
-  TestResult({
-    required this.name,
-    required this.endpoint,
-    required this.method,
-    required this.success,
-    required this.message,
-  });
-} 
+enum AuctionStatus { beforeStart, active, ended } 

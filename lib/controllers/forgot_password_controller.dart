@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class ForgotPasswordController extends GetxController {
   // Observable variables
@@ -11,11 +10,6 @@ class ForgotPasswordController extends GetxController {
   // Text controllers
   final emailController = TextEditingController();
   
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   @override
   void onClose() {
     emailController.dispose();

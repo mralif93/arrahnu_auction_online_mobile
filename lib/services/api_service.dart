@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 import '../config/api_config.dart';
 
 class ApiService {
   // Use the API config for base URL
   static String get currentBaseUrl => ApiConfig.apiUrl;
-  
-  // Headers for API requests
-  static Map<String, String> get _headers => ApiConfig.defaultHeaders;
 
   // Headers with authentication token
   static Map<String, String> _headersWithAuth(String? token) => ApiConfig.headersWithAuth(token);
@@ -26,27 +22,19 @@ class ApiService {
           ? uri.replace(queryParameters: queryParams)
           : uri;
 
-      debugPrint('🔍 API GET Request: ${uriWithQuery.toString()}');
-      
       final response = await http
           .get(uriWithQuery, headers: _headersWithAuth(token))
           .timeout(ApiConfig.timeout);
-
-      debugPrint('🔍 API Response Status: ${response.statusCode}');
       
       return _handleResponse<T>(response);
     } on SocketException {
-      debugPrint('🚨 Network Error: No internet connection');
       return ApiResponse.error('No internet connection. Please check your network and try again.');
     } on HttpException catch (e) {
-      debugPrint('🚨 HTTP Error: ${e.message}');
       return ApiResponse.error('Network error: ${e.message}');
-    } on FormatException catch (e) {
-      debugPrint('🚨 Format Error: ${e.message}');
+    } on FormatException {
       return ApiResponse.error('Invalid response format');
-    } catch (e) {
-      debugPrint('🚨 API Error: $e');
-      return ApiResponse.error('An unexpected error occurred: $e');
+    } catch (_) {
+      return ApiResponse.error('An unexpected error occurred');
     }
   }
 
@@ -59,11 +47,6 @@ class ApiService {
     try {
       final uri = Uri.parse('$currentBaseUrl$endpoint');
       
-      debugPrint('🔍 API POST Request: ${uri.toString()}');
-      if (body != null) {
-        debugPrint('🔍 Request Body: ${json.encode(body)}');
-      }
-      
       final response = await http
           .post(
             uri,
@@ -71,22 +54,16 @@ class ApiService {
             body: body != null ? json.encode(body) : null,
           )
           .timeout(ApiConfig.timeout);
-
-      debugPrint('🔍 API Response Status: ${response.statusCode}');
       
       return _handleResponse<T>(response);
     } on SocketException {
-      debugPrint('🚨 Network Error: No internet connection');
       return ApiResponse.error('No internet connection. Please check your network and try again.');
     } on HttpException catch (e) {
-      debugPrint('🚨 HTTP Error: ${e.message}');
       return ApiResponse.error('Network error: ${e.message}');
-    } on FormatException catch (e) {
-      debugPrint('🚨 Format Error: ${e.message}');
+    } on FormatException {
       return ApiResponse.error('Invalid response format');
-    } catch (e) {
-      debugPrint('🚨 API Error: $e');
-      return ApiResponse.error('An unexpected error occurred: $e');
+    } catch (_) {
+      return ApiResponse.error('An unexpected error occurred');
     }
   }
 
@@ -99,11 +76,6 @@ class ApiService {
     try {
       final uri = Uri.parse('$currentBaseUrl$endpoint');
       
-      debugPrint('🔍 API PUT Request: ${uri.toString()}');
-      if (body != null) {
-        debugPrint('🔍 Request Body: ${json.encode(body)}');
-      }
-      
       final response = await http
           .put(
             uri,
@@ -111,22 +83,16 @@ class ApiService {
             body: body != null ? json.encode(body) : null,
           )
           .timeout(ApiConfig.timeout);
-
-      debugPrint('🔍 API Response Status: ${response.statusCode}');
       
       return _handleResponse<T>(response);
     } on SocketException {
-      debugPrint('🚨 Network Error: No internet connection');
       return ApiResponse.error('No internet connection. Please check your network and try again.');
     } on HttpException catch (e) {
-      debugPrint('🚨 HTTP Error: ${e.message}');
       return ApiResponse.error('Network error: ${e.message}');
-    } on FormatException catch (e) {
-      debugPrint('🚨 Format Error: ${e.message}');
+    } on FormatException {
       return ApiResponse.error('Invalid response format');
-    } catch (e) {
-      debugPrint('🚨 API Error: $e');
-      return ApiResponse.error('An unexpected error occurred: $e');
+    } catch (_) {
+      return ApiResponse.error('An unexpected error occurred');
     }
   }
 
@@ -138,48 +104,22 @@ class ApiService {
     try {
       final uri = Uri.parse('$currentBaseUrl$endpoint');
       
-      debugPrint('🔍 API DELETE Request: ${uri.toString()}');
-      
       final response = await http
           .delete(
             uri,
             headers: _headersWithAuth(token),
           )
           .timeout(ApiConfig.timeout);
-
-      debugPrint('🔍 API Response Status: ${response.statusCode}');
       
       return _handleResponse<T>(response);
     } on SocketException {
-      debugPrint('🚨 Network Error: No internet connection');
       return ApiResponse.error('No internet connection. Please check your network and try again.');
     } on HttpException catch (e) {
-      debugPrint('🚨 HTTP Error: ${e.message}');
       return ApiResponse.error('Network error: ${e.message}');
-    } on FormatException catch (e) {
-      debugPrint('🚨 Format Error: ${e.message}');
+    } on FormatException {
       return ApiResponse.error('Invalid response format');
-    } catch (e) {
-      debugPrint('🚨 API Error: $e');
-      return ApiResponse.error('An unexpected error occurred: $e');
-    }
-  }
-
-  // Test API connection
-  static Future<ApiResponse<void>> testConnection() async {
-    try {
-      final response = await http.get(
-        Uri.parse('${ApiConfig.apiUrl}/health'),
-        headers: ApiConfig.defaultHeaders,
-      ).timeout(ApiConfig.timeout);
-      
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return ApiResponse.success(null);
-      } else {
-        return ApiResponse.error('API connection failed with status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      return ApiResponse.error('API connection failed: $e');
+    } catch (_) {
+      return ApiResponse.error('An unexpected error occurred');
     }
   }
 
@@ -187,7 +127,6 @@ class ApiService {
   static ApiResponse<T> _handleResponse<T>(http.Response response) {
     try {
       final responseBody = response.body;
-      debugPrint('🔍 API Response Body: $responseBody');
       
       final Map<String, dynamic> jsonResponse = json.decode(responseBody);
       
@@ -220,8 +159,7 @@ class ApiService {
             return ApiResponse.error(message);
         }
       }
-    } catch (e) {
-      debugPrint('🚨 Error parsing response: $e');
+    } catch (_) {
       return ApiResponse.error('Failed to parse server response');
     }
   }

@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../config/api_config.dart';
 import '../models/auth_models.dart';
 import '../models/user.dart';
-import 'api_service.dart';
 import 'storage_service.dart';
 
 class AuthService {

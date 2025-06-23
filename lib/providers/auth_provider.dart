@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/user.dart';
 import '../models/auth_models.dart';
@@ -34,15 +33,11 @@ class AuthProvider extends GetxController {
         final storedUser = _storageService.getUser();
         if (storedUser != null) {
           user.value = storedUser;
-          debugPrint('🔍 AuthProvider: User loaded from storage: ${storedUser.fullName}');
         } else {
-          debugPrint('🚨 AuthProvider: No user data found in storage');
-          // Clear authentication if no user data
           await logout();
         }
       }
     } catch (e) {
-      debugPrint('🚨 AuthProvider: Error checking auth status: $e');
       await logout();
     } finally {
       isLoading.value = false;
@@ -59,14 +54,11 @@ class AuthProvider extends GetxController {
       if (result.success && result.user != null) {
         user.value = result.user;
         isLoggedIn.value = true;
-        debugPrint('🔍 AuthProvider: Login successful for ${result.user!.fullName}');
         return true;
       } else {
-        debugPrint('🚨 AuthProvider: Login failed: ${result.error}');
         return false;
       }
     } catch (e) {
-      debugPrint('🚨 AuthProvider: Login error: $e');
       return false;
     } finally {
       isLoading.value = false;
@@ -89,14 +81,11 @@ class AuthProvider extends GetxController {
       ));
       
       if (result.success) {
-        debugPrint('🔍 AuthProvider: Registration successful');
         return true;
       } else {
-        debugPrint('🚨 AuthProvider: Registration failed: ${result.error}');
         return false;
       }
     } catch (e) {
-      debugPrint('🚨 AuthProvider: Registration error: $e');
       return false;
     } finally {
       isLoading.value = false;
@@ -111,9 +100,8 @@ class AuthProvider extends GetxController {
       await _authService.logout();
       user.value = null;
       isLoggedIn.value = false;
-      debugPrint('🔍 AuthProvider: Logout successful');
     } catch (e) {
-      debugPrint('🚨 AuthProvider: Logout error: $e');
+      // Ignore logout errors - user is already logged out
     } finally {
       isLoading.value = false;
     }
@@ -121,7 +109,6 @@ class AuthProvider extends GetxController {
 
   // Placeholder methods for removed functionality
   Future<bool> forgotPassword(String email) async {
-    debugPrint('🔍 AuthProvider: forgotPassword not implemented');
     return false;
   }
 
@@ -131,11 +118,9 @@ class AuthProvider extends GetxController {
     required String password,
     required String passwordConfirmation,
   }) async {
-    debugPrint('🔍 AuthProvider: resetPassword not implemented');
     return false;
   }
 
   Future<void> refreshUser() async {
-    debugPrint('🔍 AuthProvider: refreshUser not implemented');
   }
 } 

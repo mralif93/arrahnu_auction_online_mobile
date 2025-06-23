@@ -24,9 +24,6 @@ class ApiConfig {
   // API timeout configuration
   static const Duration timeout = Duration(seconds: 30);
   
-  // Mock mode for development when API server is not available
-  static bool useMockMode = false; // Disabled mock mode to use real API
-  
   // API versioning
   static const String apiVersion = 'v1';
   

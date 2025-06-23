@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class EmailVerificationController extends GetxController {
   // Observable variables
@@ -12,11 +11,6 @@ class EmailVerificationController extends GetxController {
   // Text controller
   final emailController = TextEditingController();
   
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   @override
   void onClose() {
     emailController.dispose();
