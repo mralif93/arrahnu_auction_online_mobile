@@ -296,52 +296,42 @@ class RegisterView extends GetView<RegisterController> {
 
         SizedBox(height: ResponsivePadding.formFieldSpacing),
 
-        // Postcode and City Row
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.postcodeController,
-                hintText: "Postcode",
-                icon: Icons.markunread_mailbox_outlined,
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(width: ResponsivePadding.formFieldSpacing),
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.cityController,
-                hintText: "City",
-                icon: Icons.location_city_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-          ],
+        // Postcode Field (Full Width)
+        _buildCompactTextField(
+          controller: controller.postcodeController,
+          hintText: "Postcode",
+          icon: Icons.markunread_mailbox_outlined,
+          keyboardType: TextInputType.number,
         ),
 
         SizedBox(height: ResponsivePadding.formFieldSpacing),
 
-        // State and Country Row
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.stateController,
-                hintText: "State",
-                icon: Icons.map_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-            SizedBox(width: ResponsivePadding.formFieldSpacing),
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.countryController,
-                hintText: "Country",
-                icon: Icons.public_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-          ],
+        // City Field (Full Width)
+        _buildCompactTextField(
+          controller: controller.cityController,
+          hintText: "City",
+          icon: Icons.location_city_outlined,
+          keyboardType: TextInputType.text,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // State Field (Full Width)
+        _buildCompactTextField(
+          controller: controller.stateController,
+          hintText: "State",
+          icon: Icons.map_outlined,
+          keyboardType: TextInputType.text,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        // Country Field (Full Width)
+        _buildCompactTextField(
+          controller: controller.countryController,
+          hintText: "Country",
+          icon: Icons.public_outlined,
+          keyboardType: TextInputType.text,
         ),
 
         SizedBox(height: ResponsivePadding.sectionSpacing),
