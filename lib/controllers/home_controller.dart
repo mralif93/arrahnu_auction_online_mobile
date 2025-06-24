@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import '../services/api_service.dart';
 
 enum AuctionStatus { beforeStart, active, ended }
 
 class HomeController extends GetxController {
+  final ApiService _apiService = ApiService();
+
   // Observable variables
   var selectedCategory = 'All'.obs;
   var searchQuery = ''.obs;
@@ -29,20 +32,21 @@ class HomeController extends GetxController {
   var timeRemainingLabel = 'Bidding Session Start In:'.obs;
 
   // Auction session dates (constants for now, will be from API later)
-  final DateTime auctionStartDate = DateTime(
+  var auctionStartDate = DateTime(
     2025,
     6,
-    24,
+    5,
     10,
     30,
-  ); // 05/06/2025 10:30 a.m.
-  final DateTime auctionEndDate = DateTime(
+  ).obs; // 05/06/2025 10:30 a.m.
+  var auctionEndDate = DateTime(
     2025,
     6,
-    28,
+    9,
     16,
     30,
-  ); // 09/06/2025 04:30 p.m.
+  ).obs; // 09/06/2025 04:30 p.m.
+  
 
   Timer? _countdownTimer;
 
@@ -293,9 +297,15 @@ class HomeController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+
+    // fetch start and end date from api service
+    await fetchApiService();
+
+    // update auction status
     _updateAuctionStatus();
+
     // Start timer for real-time updates (disabled in tests)
     _startCountdownTimer();
   }
@@ -306,10 +316,29 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
+  Future<void> fetchApiService() async {
+    try {
+      final auction = await _apiService.getActiveAuctions();
+      if (auction['success'] == true && 
+          auction['data'] != null && 
+          auction['data'] is List && 
+          auction['data'].isNotEmpty) {
+        
+        auctionStartDate.value = DateTime.parse(auction['data'][0]['start_datetime']).toLocal();
+        auctionEndDate.value = DateTime.parse(auction['data'][0]['end_datetime']).toLocal();
+        
+        print('Updated Start Date: ${auctionStartDate.value}');
+        print('Updated End Date: ${auctionEndDate.value}');
+      }
+    } catch (e) {
+      print('Error fetching auction dates: $e');
+    }
+  }
+
   // Start the countdown timer
   void _startCountdownTimer() {
     _countdownTimer?.cancel(); // Cancel any existing timer
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _countdownTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       try {
         _updateAuctionStatus();
       } catch (e) {
@@ -323,16 +352,16 @@ class HomeController extends GetxController {
   void _updateAuctionStatus() {
     final now = DateTime.now();
 
-    if (now.isBefore(auctionStartDate)) {
+    if (now.isBefore(auctionStartDate.value)) {
       // Before auction starts
       auctionStatus.value = AuctionStatus.beforeStart;
       timeRemainingLabel.value = 'Bidding Session Start In:';
-      timeRemaining.value = _formatDuration(auctionStartDate.difference(now));
-    } else if (now.isAfter(auctionStartDate) && now.isBefore(auctionEndDate)) {
+      timeRemaining.value = _formatDuration(auctionStartDate.value.difference(now));
+    } else if (now.isAfter(auctionStartDate.value) && now.isBefore(auctionEndDate.value)) {
       // Auction is active
       auctionStatus.value = AuctionStatus.active;
       timeRemainingLabel.value = 'Bidding Session End In:';
-      timeRemaining.value = _formatDuration(auctionEndDate.difference(now));
+      timeRemaining.value = _formatDuration(auctionEndDate.value.difference(now));
     } else {
       // Auction has ended
       auctionStatus.value = AuctionStatus.ended;
@@ -384,11 +413,11 @@ class HomeController extends GetxController {
 
   // Get formatted auction dates for display
   String get formattedStartDate {
-    return '${auctionStartDate.day.toString().padLeft(2, '0')}/${auctionStartDate.month.toString().padLeft(2, '0')}/${auctionStartDate.year} ${_formatTime(auctionStartDate)} (${_getDayName(auctionStartDate)})';
+    return '${auctionStartDate.value.day.toString().padLeft(2, '0')}/${auctionStartDate.value.month.toString().padLeft(2, '0')}/${auctionStartDate.value.year} ${_formatTime(auctionStartDate.value)} (${_getDayName(auctionStartDate.value)})';
   }
 
   String get formattedEndDate {
-    return '${auctionEndDate.day.toString().padLeft(2, '0')}/${auctionEndDate.month.toString().padLeft(2, '0')}/${auctionEndDate.year} ${_formatTime(auctionEndDate)} (${_getDayName(auctionEndDate)})';
+    return '${auctionEndDate.value.day.toString().padLeft(2, '0')}/${auctionEndDate.value.month.toString().padLeft(2, '0')}/${auctionEndDate.value.year} ${_formatTime(auctionEndDate.value)} (${_getDayName(auctionEndDate.value)})';
   }
 
   String get currentDate {
