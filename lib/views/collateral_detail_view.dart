@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import '../models/auction_item.dart';
 
 class CollateralDetailView extends GetView<HomeController> {
-  final String branchName;
-  final String accountNumber;
-  final String accountName;
-  final Map<String, dynamic> collateral;
+  final AuctionItem collateral;
 
   const CollateralDetailView({
     super.key,
-    required this.branchName,
-    required this.accountNumber,
-    required this.accountName,
     required this.collateral,
   });
 
@@ -31,7 +26,7 @@ class CollateralDetailView extends GetView<HomeController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              collateral['title'] ?? 'Collateral Details',
+              collateral.title.isEmpty ? 'Collateral Details' : collateral.title,
               style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 16,
@@ -40,7 +35,7 @@ class CollateralDetailView extends GetView<HomeController> {
               ),
             ),
             Text(
-              '${collateral['id'] ?? 'N/A'}',
+              collateral.id,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 12,
@@ -236,7 +231,7 @@ class CollateralDetailView extends GetView<HomeController> {
           Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
           const SizedBox(width: 4),
           Text(
-            collateral['timeLeft'] ?? '0h 0m',
+            collateral.timeLeft,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 14,
@@ -279,25 +274,7 @@ class CollateralDetailView extends GetView<HomeController> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  branchName,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(Icons.person, size: 16, color: const Color(0xFFFE8000)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  '$accountName ($accountNumber)',
+                  collateral.category,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12,
@@ -351,7 +328,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['currentBid'] ?? 'RM 0',
+                collateral.currentBid,
                 style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 16,
@@ -376,7 +353,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['startingPrice'] ?? 'RM 0',
+                collateral.startingPrice,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 12,
@@ -401,7 +378,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['reservedPrice'] ?? 'RM 3,000',
+                collateral.reservedPrice,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 12,
@@ -426,7 +403,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['totalPrice'] ?? 'RM 2,800',
+                collateral.totalPrice,
                 style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 14,
@@ -485,7 +462,7 @@ class CollateralDetailView extends GetView<HomeController> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  collateral['goldType'] ?? 'Yellow Gold',
+                  collateral.goldType,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12,
@@ -517,7 +494,7 @@ class CollateralDetailView extends GetView<HomeController> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  collateral['purity'] ?? 'N/A',
+                  collateral.purity,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12,
@@ -543,7 +520,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['weight'] ?? 'N/A',
+                collateral.weight,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 12,
@@ -568,7 +545,7 @@ class CollateralDetailView extends GetView<HomeController> {
                 ),
               ),
               Text(
-                collateral['goldPrice'] ?? 'RM 280/g',
+                collateral.goldPrice,
                 style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 12,
@@ -608,8 +585,9 @@ class CollateralDetailView extends GetView<HomeController> {
           ),
           const SizedBox(height: 8),
           Text(
-            collateral['description'] ??
-                'No description available for this auction item.',
+            collateral.description.isEmpty ? 
+                'No description available for this auction item.' : 
+                collateral.description,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12,
@@ -689,10 +667,10 @@ class CollateralDetailView extends GetView<HomeController> {
   void _showBidDialog() {
     final TextEditingController bidController = TextEditingController();
     final currentBidAmount = _extractAmountFromString(
-      collateral['currentBid'] ?? 'RM 0',
+      collateral.currentBid,
     );
     final bidIncrement = _extractAmountFromString(
-      collateral['bidIncrement'] ?? 'RM 50',
+      collateral.bidIncrement,
     );
     final minimumBid = currentBidAmount + bidIncrement;
 
@@ -824,7 +802,7 @@ class CollateralDetailView extends GetView<HomeController> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    collateral['currentBid'] ?? 'RM 0',
+                                    collateral.currentBid,
                                     style: const TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 18,

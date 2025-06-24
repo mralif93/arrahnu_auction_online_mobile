@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import '../models/index.dart';
 import 'branch_accounts_view.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -212,9 +213,9 @@ class HomeView extends GetView<HomeController> {
         Obx(() {
           final selectedCategory = controller.selectedCategory.value;
           final items = selectedCategory == 'All'
-              ? controller.auctionItems
-              : controller.auctionItems
-                    .where((item) => item['category'] == selectedCategory)
+              ? controller.dataAuctionItems
+              : controller.dataAuctionItems
+                    .where((item) => item.category == selectedCategory)
                     .toList();
           return GridView.builder(
             shrinkWrap: true,
@@ -254,163 +255,112 @@ class HomeView extends GetView<HomeController> {
     return 0.75; // 10" tablets
   }
 
-  Widget _buildTabletAuctionCard(
-    Map<String, dynamic> item,
-    double screenWidth,
-  ) {
-    final cardPadding = screenWidth >= 1024 ? 16.0 : 14.0;
-    final borderRadius = screenWidth >= 1024 ? 16.0 : 14.0;
-    final titleFontSize = screenWidth >= 1024 ? 16.0 : 15.0;
-    final priceFontSize = screenWidth >= 1024 ? 18.0 : 17.0;
-    final detailFontSize = screenWidth >= 1024 ? 13.0 : 12.0;
+  Widget _buildTabletAuctionCard(AuctionItem item, double screenWidth) {
+    final titleFontSize = screenWidth >= 1024 ? 18.0 : 16.0;
+    final descriptionFontSize = screenWidth >= 1024 ? 14.0 : 12.0;
+    final priceFontSize = screenWidth >= 1024 ? 16.0 : 14.0;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: const Color(0xFFFE8000).withValues(alpha: 0.15),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.08),
-            blurRadius: screenWidth >= 1024 ? 12 : 8,
-            offset: Offset(0, screenWidth >= 1024 ? 4 : 3),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: screenWidth >= 1024 ? 8 : 6,
-            offset: Offset(0, screenWidth >= 1024 ? 2 : 1),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image section - Reduced height
-          Container(
-            height: screenWidth >= 1024 ? 120 : 100,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(borderRadius),
-                topRight: Radius.circular(borderRadius),
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.image,
-                size: screenWidth >= 1024 ? 40 : 32,
-                color: Colors.grey.shade400,
-              ),
-            ),
-          ),
-
-          // Content section - Fixed height to prevent overflow
-          Container(
-            height: screenWidth >= 1024
-                ? 120
-                : 105, // Increased height for more info
-            padding: EdgeInsets.all(cardPadding),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => controller.onAuctionItemTap(item),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 Text(
-                  item['title'] ?? 'Auction Item',
+                  item.title.isEmpty ? 'Untitled Item' : item.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: titleFontSize,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey.shade800,
                   ),
-                  maxLines: 1, // Reduced to single line
-                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: screenWidth >= 1024 ? 4 : 3),
-                // Branch and Account info
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: screenWidth >= 1024 ? 14 : 12,
-                      color: Colors.grey.shade500,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        "${item['branchName']?.split(' ')[0] ?? 'Branch'} • ${item['accountNumber'] ?? 'ACC'}",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: screenWidth >= 1024 ? 12 : 11,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: screenWidth >= 1024 ? 6 : 4),
+                const SizedBox(height: 8),
+                // Description
                 Text(
-                  item['currentBid'] ?? 'RM 0',
+                  item.description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: priceFontSize,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFFFE8000),
+                    fontSize: descriptionFontSize,
+                    color: Colors.grey.shade600,
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 16),
+                // Price and Time
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.access_time,
-                      size: screenWidth >= 1024 ? 14 : 12,
-                      color: Colors.grey.shade600,
-                    ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        item['timeLeft'] ?? '2h 30m',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: detailFontSize,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth >= 1024 ? 6 : 4,
-                          vertical: screenWidth >= 1024 ? 3 : 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          item['purity'] ?? 'N/A',
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Current Bid',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: screenWidth >= 1024 ? 11 : 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue.shade700,
+                            fontSize: descriptionFontSize,
+                            color: Colors.grey.shade600,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
+                        Text(
+                          item.currentBid,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: priceFontSize,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFFE8000),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Time Left',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: descriptionFontSize,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Text(
+                          item.timeLeft,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: priceFontSize,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1343,15 +1293,13 @@ class HomeView extends GetView<HomeController> {
             horizontal: 12,
           ), // Reduced padding
           child: Column(
-            children: controller.auctionData.keys.map((branchName) {
+            children: controller.auctionsByBranch.keys.map((branchName) {
               final branchData = controller.auctionsByBranch[branchName] ?? [];
               final itemCount = branchData.length;
-              final accountCount =
-                  controller.auctionData[branchName]?.keys.length ?? 0;
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: _buildBranchCard(branchName, accountCount, itemCount),
+                child: _buildBranchCard(branchName, itemCount),
               );
             }).toList(),
           ),
@@ -1360,7 +1308,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildBranchCard(String branchName, int accountCount, int itemCount) {
+  Widget _buildBranchCard(String branchName, int itemCount) {
     return GestureDetector(
       onTap: () => _navigateToBranchAccounts(branchName),
       child: Container(
@@ -1412,7 +1360,7 @@ class HomeView extends GetView<HomeController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '$accountCount accounts • $itemCount items',
+                    '$itemCount items',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12,
