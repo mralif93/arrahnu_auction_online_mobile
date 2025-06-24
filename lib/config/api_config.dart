@@ -1,6 +1,18 @@
 class ApiConfig {
   static const String baseUrl = 'http://127.0.0.1:9000/api';
-  
+
+  // Headers
+  static Map<String, String> get headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  // Auth headers with token
+  static Map<String, String> authHeaders(String token) => {
+    ...headers,
+    'Authorization': 'Bearer $token',
+  };
+
   // Add other API-related configurations here
   static const int timeoutDuration = 30; // seconds
 }

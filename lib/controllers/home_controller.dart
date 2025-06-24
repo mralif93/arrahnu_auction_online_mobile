@@ -165,8 +165,6 @@ class HomeController extends GetxController {
       
       // Update the flat list of auction items
       dataAuctionItems.value = auctionResponse.allCollaterals;
-      
-      print('Fetched ${dataAuctionItems.length} auction items from ${auctionResponse.branchData.length} branches');
     } catch (e) {
       print('Error fetching auction items: $e');
     }
