@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/account_controller.dart';
-import 'login_view.dart';
-import 'register_view.dart';
+import 'auth/login_view.dart';
+import 'auth/register_view.dart';
 import 'dashboard_view.dart';
 
 class AccountView extends GetView<AccountController> {

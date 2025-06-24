@@ -1,6 +1,10 @@
 class ApiConfig {
   static const String baseUrl = 'http://127.0.0.1:9000/api';
 
+  // Auth endpoints
+  static const String login = '/auth/login';
+  static const String register = '/auth/register';
+
   // Headers
   static Map<String, String> get headers => {
     'Content-Type': 'application/json',

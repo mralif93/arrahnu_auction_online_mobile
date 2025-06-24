@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'account_controller.dart';
+import '../services/auth_service.dart';
+import '../models/auth/login_request.dart';
 
 class LoginController extends GetxController {
+  final AuthService _authService = AuthService();
+  
   // Text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -16,6 +20,7 @@ class LoginController extends GetxController {
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
+    _authService.dispose();
     super.onClose();
   }
 
@@ -41,19 +46,43 @@ class LoginController extends GetxController {
 
   Future<void> handleLogin() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      // Validation failed - fields are empty
+      Get.snackbar(
+        'Error',
+        'Please fill in all fields',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
     isLoading.value = true;
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final request = LoginRequest(
+        email: emailController.text,
+        password: passwordController.text,
+      );
 
-    isLoading.value = false;
+      final response = await _authService.login(request);
 
-    // Show dashboard in Account tab
-    final accountController = Get.find<AccountController>();
-    accountController.showDashboard();
+      if (response.success && response.data != null) {
+        // Show dashboard in Account tab
+        final accountController = Get.find<AccountController>();
+        accountController.showDashboard();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred during login',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

@@ -13,7 +13,7 @@ class AuthService {
   Future<AuthResponse> login(LoginRequest request) async {
     try {
       final response = await _client.post(
-        Uri.parse(ApiConfig.baseUrl + ApiConfig.login),
+        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.login}'),
         headers: ApiConfig.headers,
         body: jsonEncode(request.toJson()),
       );
@@ -31,7 +31,7 @@ class AuthService {
   Future<AuthResponse> register(RegisterRequest request) async {
     try {
       final response = await _client.post(
-        Uri.parse(ApiConfig.baseUrl + ApiConfig.register),
+        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.register}'),
         headers: ApiConfig.headers,
         body: jsonEncode(request.toJson()),
       );
