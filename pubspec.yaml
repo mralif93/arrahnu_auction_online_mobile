@@ -35,10 +35,10 @@ dependencies:
   get: ^4.6.6
 
   # Google Fonts for Tailwind CSS-like typography
-  google_fonts: ^6.1.0
+  google_fonts: ^6.2.1
 
   # Path provider for Google Fonts caching
-  path_provider: ^2.1.1
+  path_provider: ^2.1.5
 
   # HTTP for API requests
   http: ^1.2.0
