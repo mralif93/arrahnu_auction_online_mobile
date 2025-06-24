@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import '../services/api_service.dart';
+import '../models/index.dart';
 
 enum AuctionStatus { beforeStart, active, ended }
 
@@ -31,22 +32,13 @@ class HomeController extends GetxController {
   var timeRemaining = ''.obs;
   var timeRemainingLabel = 'Bidding Session Start In:'.obs;
 
-  // Auction session dates (constants for now, will be from API later)
-  var auctionStartDate = DateTime(
-    2025,
-    6,
-    5,
-    10,
-    30,
-  ).obs; // 05/06/2025 10:30 a.m.
-  var auctionEndDate = DateTime(
-    2025,
-    6,
-    9,
-    16,
-    30,
-  ).obs; // 09/06/2025 04:30 p.m.
-  
+  // Auction session dates
+  var auctionStartDate = DateTime.now().obs;
+  var auctionEndDate = DateTime.now().obs;
+
+  // Auction items
+  var dataAuctionItems = <AuctionItem>[].obs;
+  var auctionItemsResponse = Rxn<AuctionItemsResponse>();
 
   Timer? _countdownTimer;
 
@@ -302,6 +294,7 @@ class HomeController extends GetxController {
 
     // fetch start and end date from api service
     await fetchApiService();
+    await fetchAuctionItems();
 
     // update auction status
     _updateAuctionStatus();
@@ -326,12 +319,26 @@ class HomeController extends GetxController {
         
         auctionStartDate.value = DateTime.parse(auction['data'][0]['start_datetime']).toLocal();
         auctionEndDate.value = DateTime.parse(auction['data'][0]['end_datetime']).toLocal();
-        
-        print('Updated Start Date: ${auctionStartDate.value}');
-        print('Updated End Date: ${auctionEndDate.value}');
       }
     } catch (e) {
       print('Error fetching auction dates: $e');
+    }
+  }
+
+  Future<void> fetchAuctionItems() async {
+    try {
+      final response = await _apiService.getAuctionItems();
+      final auctionResponse = AuctionItemsResponse.fromJson(response);
+      
+      // Update the response object
+      auctionItemsResponse.value = auctionResponse;
+      
+      // Update the flat list of auction items
+      dataAuctionItems.value = auctionResponse.allCollaterals;
+      
+      print('Fetched ${dataAuctionItems.length} auction items from ${auctionResponse.branchData.length} branches');
+    } catch (e) {
+      print('Error fetching auction items: $e');
     }
   }
 
@@ -444,5 +451,22 @@ class HomeController extends GetxController {
       'Sunday',
     ];
     return days[dateTime.weekday - 1];
+  }
+
+  // Get filtered auction items based on category and search query
+  List<AuctionItem> get filteredAuctionItems {
+    return dataAuctionItems.where((item) {
+      final matchesCategory = selectedCategory.value == 'All' || 
+                            item.category == selectedCategory.value;
+      final matchesSearch = searchQuery.value.isEmpty ||
+                          item.title.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+                          item.description.toLowerCase().contains(searchQuery.value.toLowerCase());
+      return matchesCategory && matchesSearch;
+    }).toList();
+  }
+
+  // Get auction items for a specific branch
+  List<AuctionItem> getAuctionItemsByBranch(String branchName) {
+    return auctionItemsResponse.value?.getCollateralsByBranch(branchName) ?? [];
   }
 }

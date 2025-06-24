@@ -86,6 +86,10 @@ class ApiService {
     return get(AuctionEndpoints.active);
   }
 
+  Future<Map<String, dynamic>> getAuctionItems() async {
+    return get(AuctionEndpoints.auctionItems);
+  }
+
   // Authentication Methods
   Future<Map<String, dynamic>> register(Map<String, dynamic> userData) async {
     return post(AuthEndpoints.register, userData);

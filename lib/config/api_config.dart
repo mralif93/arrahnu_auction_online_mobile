@@ -27,4 +27,5 @@ class ListEndpoints {
 class AuctionEndpoints {
   static const String _base = '${ApiConfig.baseUrl}/auctions';
   static const String active = '$_base/active';
+  static const String auctionItems = '$_base/auction-items';
 } 

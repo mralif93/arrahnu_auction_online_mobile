@@ -48,6 +48,7 @@ class _ApiTestPageState extends State<ApiTestPage> {
     );
     
     await _testEndpoint('Get Active Auctions', () => _apiService.getActiveAuctions());
+    await _testEndpoint('Get Auction Items', () => _apiService.getAuctionItems());
 
     setState(() => _isTesting = false);
   }
