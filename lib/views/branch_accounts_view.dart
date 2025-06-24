@@ -12,7 +12,7 @@ class BranchAccountsView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final branchData = controller.auctionsByBranch[branchName] ?? [];
+      final branchData = controller.getCollateralsForBranch(branchName);
 
       return Scaffold(
         backgroundColor: Colors.grey.shade50,
@@ -51,7 +51,7 @@ class BranchAccountsView extends GetView<HomeController> {
               margin: const EdgeInsets.only(right: 16),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+                color: const Color(0xFFFE8000).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -88,12 +88,12 @@ class BranchAccountsView extends GetView<HomeController> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFFE8000).withValues(alpha: 0.2),
+            color: const Color(0xFFFE8000).withOpacity(0.2),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -108,7 +108,7 @@ class BranchAccountsView extends GetView<HomeController> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+                    color: const Color(0xFFFE8000).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -225,7 +225,7 @@ class BranchAccountsView extends GetView<HomeController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFFE8000).withValues(alpha: 0.1),
+        color: const Color(0xFFFE8000).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

@@ -35,11 +35,13 @@ class AuctionItemsResponse {
       'data': Map.fromEntries(
         branchData.map((branch) => MapEntry(
           branch.branchName,
-          {'': {
-            'accountName': branch.accountName,
-            'accountNumber': branch.accountNumber,
-            'collaterals': branch.collaterals.map((item) => item.toJson()).toList(),
-          }},
+          {
+            '': {
+              'accountName': branch.accountName,
+              'accountNumber': branch.accountNumber,
+              'collaterals': branch.collaterals.map((item) => item.toJson()).toList(),
+            }
+          },
         )),
       ),
     };

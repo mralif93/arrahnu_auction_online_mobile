@@ -53,32 +53,35 @@ class HomeController extends GetxController {
   Timer? _countdownTimer;
 
   // Get auction data organized by branch for hierarchical display
-  Map<String, List<AuctionItem>> get auctionsByBranch {
+  Map<String, BranchAuctionData> get auctionsByBranch {
     if (auctionItemsResponse.value == null) return {};
 
-    Map<String, List<AuctionItem>> branchData = {};
+    Map<String, BranchAuctionData> branchData = {};
     for (var branch in auctionItemsResponse.value!.branchData) {
-      branchData[branch.branchName] = branch.collaterals;
+      branchData[branch.branchName] = branch;
     }
     return branchData;
   }
 
-  // Get auction data organized by account for detailed view
-  Map<String, Map<String, dynamic>> get auctionsByAccount {
-    if (auctionItemsResponse.value == null) return {};
+  // Get all collaterals for a specific branch
+  List<AuctionItem> getCollateralsForBranch(String branchName) {
+    return auctionsByBranch[branchName]?.collaterals ?? [];
+  }
 
-    Map<String, Map<String, dynamic>> accountData = {};
-    for (var branch in auctionItemsResponse.value!.branchData) {
-      if (branch.accountNumber != null) {
-        accountData[branch.accountNumber!] = {
-          'branchName': branch.branchName,
-          'accountName': branch.accountName,
-          'accountNumber': branch.accountNumber,
-          'collaterals': branch.collaterals,
-        };
-      }
-    }
-    return accountData;
+  // Get total number of items across all branches
+  int get totalItems {
+    if (auctionItemsResponse.value == null) return 0;
+    return auctionItemsResponse.value!.branchData
+        .map((branch) => branch.totalCollaterals)
+        .fold<int>(0, (sum, count) => sum + count);
+  }
+
+  // Get total number of accounts across all branches
+  int get totalAccounts {
+    if (auctionItemsResponse.value == null) return 0;
+    return auctionItemsResponse.value!.branchData
+        .map((branch) => branch.totalAccounts)
+        .fold<int>(0, (sum, count) => sum + count);
   }
 
   // Methods
@@ -282,9 +285,13 @@ class HomeController extends GetxController {
 
   // Get filtered auction items based on category and search query
   List<AuctionItem> get filteredAuctionItems {
-    return dataAuctionItems.where((item) {
+    if (auctionItemsResponse.value == null) return [];
+    
+    final allItems = auctionItemsResponse.value!.allCollaterals;
+
+    return allItems.where((item) {
       final matchesCategory = selectedCategory.value == 'All' || 
-                            item.category == selectedCategory.value;
+                          item.category == selectedCategory.value;
       final matchesSearch = searchQuery.value.isEmpty ||
                           item.title.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
                           item.description.toLowerCase().contains(searchQuery.value.toLowerCase());

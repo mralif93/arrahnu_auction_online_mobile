@@ -1294,8 +1294,8 @@ class HomeView extends GetView<HomeController> {
           ), // Reduced padding
           child: Column(
             children: controller.auctionsByBranch.keys.map((branchName) {
-              final branchData = controller.auctionsByBranch[branchName] ?? [];
-              final itemCount = branchData.length;
+              final branch = controller.auctionsByBranch[branchName]!;
+              final itemCount = branch.totalCollaterals;
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
