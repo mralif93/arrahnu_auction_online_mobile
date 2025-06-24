@@ -19,38 +19,56 @@ class AuthResponse {
 }
 
 class AuthData {
-  final String token;
   final UserData user;
+  final String token;
+  final String token_type;
 
   AuthData({
-    required this.token,
     required this.user,
+    required this.token,
+    required this.token_type,
   });
 
   factory AuthData.fromJson(Map<String, dynamic> json) {
     return AuthData(
+      user: UserData.fromJson(json['user'] ?? {}),
       token: json['token'] ?? '',
-      user: UserData.fromJson(json['user']),
+      token_type: json['token_type'] ?? '',
     );
   }
 }
 
 class UserData {
-  final int id;
-  final String name;
+  final String id;
+  final String full_name;
+  final String username;
   final String email;
+  final String phone_number;
+  final String role;
+  final bool is_admin;
+  final String status;
 
   UserData({
     required this.id,
-    required this.name,
+    required this.full_name,
+    required this.username,
     required this.email,
+    required this.phone_number,
+    required this.role,
+    required this.is_admin,
+    required this.status,
   });
 
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
+      id: json['id']?.toString() ?? '',
+      full_name: json['full_name']?.toString() ?? '',
+      username: json['username']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      phone_number: json['phone_number']?.toString() ?? '',
+      role: json['role']?.toString() ?? '',
+      is_admin: json['is_admin'] ?? false,
+      status: json['status']?.toString() ?? '',
     );
   }
 } 

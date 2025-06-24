@@ -19,12 +19,35 @@ class AuthService {
       );
 
       final responseData = jsonDecode(response.body);
-      return AuthResponse.fromJson(responseData);
+
+      print('Response: ${responseData}');
+      
+      // Check if the response has the expected structure
+      if (responseData is Map<String, dynamic>) {
+        return AuthResponse.fromJson(responseData);
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      }
     } catch (e) {
-      return AuthResponse(
-        success: false,
-        message: 'An error occurred: ${e.toString()}',
-      );
+      if (e is FormatException) {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      } else if (e is http.ClientException) {
+        return AuthResponse(
+          success: false,
+          message: 'Network error: Unable to connect to server',
+        );
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'An unexpected error occurred: ${e.toString()}',
+        );
+      }
     }
   }
 
@@ -37,12 +60,33 @@ class AuthService {
       );
 
       final responseData = jsonDecode(response.body);
-      return AuthResponse.fromJson(responseData);
+      
+      // Check if the response has the expected structure
+      if (responseData is Map<String, dynamic>) {
+        return AuthResponse.fromJson(responseData);
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      }
     } catch (e) {
-      return AuthResponse(
-        success: false,
-        message: 'An error occurred: ${e.toString()}',
-      );
+      if (e is FormatException) {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      } else if (e is http.ClientException) {
+        return AuthResponse(
+          success: false,
+          message: 'Network error: Unable to connect to server',
+        );
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'An unexpected error occurred: ${e.toString()}',
+        );
+      }
     }
   }
 
