@@ -28,6 +28,9 @@ class _ApiTestPageState extends State<ApiTestPage> {
     // Test API Connection
     await _testEndpoint('API Connection Test', () => _apiService.testConnection());
 
+    // Test Authentication Endpoints
+    await _testEndpoint('Login Test', () => _apiService.login('admin@arrahnu.com', 'password'));
+
     // Test Public Endpoints
     await _testEndpoint('Get Auctions List', () => _apiService.getAuctions());
     

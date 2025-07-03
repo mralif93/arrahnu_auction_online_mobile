@@ -34,8 +34,7 @@ class LoginController extends GetxController {
   }
 
   void onForgotPasswordTap() {
-    // Handle forgot password
-    // TODO: Implement forgot password functionality
+    Get.toNamed('/forgot-password');
   }
 
   void onSignUpTap() {

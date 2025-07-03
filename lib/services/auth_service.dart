@@ -90,6 +90,45 @@ class AuthService {
     }
   }
 
+  Future<AuthResponse> forgotPassword(String email) async {
+    try {
+      final response = await _client.post(
+        Uri.parse(AuthEndpoints.forgotPassword),
+        headers: ApiConfig.headers,
+        body: jsonEncode({'email': email}),
+      );
+
+      final responseData = jsonDecode(response.body);
+      
+      // Check if the response has the expected structure
+      if (responseData is Map<String, dynamic>) {
+        return AuthResponse.fromJson(responseData);
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      }
+    } catch (e) {
+      if (e is FormatException) {
+        return AuthResponse(
+          success: false,
+          message: 'Invalid response format from server',
+        );
+      } else if (e is http.ClientException) {
+        return AuthResponse(
+          success: false,
+          message: 'Network error: Unable to connect to server',
+        );
+      } else {
+        return AuthResponse(
+          success: false,
+          message: 'An unexpected error occurred: ${e.toString()}',
+        );
+      }
+    }
+  }
+
   void dispose() {
     _client.close();
   }

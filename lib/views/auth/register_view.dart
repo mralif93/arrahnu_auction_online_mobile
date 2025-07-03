@@ -52,23 +52,17 @@ class RegisterView extends GetView<RegisterController> {
         // Sticky Logo Header
         Container(
           width: double.infinity,
-          padding: EdgeInsets.only(
-            top: ResponsivePadding.largeSpacing * 2,
-            bottom: ResponsivePadding.smallSpacing
-          ),
           decoration: BoxDecoration(color: AppColors.background),
           child: Container(
             margin: AppTheme.getPadding(horizontal: 16),
             child: Center(
               child: Container(
-                height: 80,
                 padding: AppTheme.getPadding(horizontal: 20),
                 child: Image.asset(
                   'assets/images/logo/001.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      height: 80,
                       padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
@@ -90,7 +84,7 @@ class RegisterView extends GetView<RegisterController> {
         // Scrollable Content
         Expanded(
           child: SingleChildScrollView(
-            padding: AppTheme.getPadding(horizontal: 24, vertical: 24),
+            padding: AppTheme.getPadding(horizontal: 24, vertical: 0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -302,51 +296,38 @@ class RegisterView extends GetView<RegisterController> {
         SizedBox(height: ResponsivePadding.formFieldSpacing),
 
         // Postcode and City Row
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.postcodeController,
-                hintText: "Postcode",
-                icon: Icons.markunread_mailbox_outlined,
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(width: ResponsivePadding.formFieldSpacing),
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.cityController,
-                hintText: "City",
-                icon: Icons.location_city_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-          ],
+        _buildCompactTextField(
+          controller: controller.postcodeController,
+          hintText: "Postcode",
+          icon: Icons.markunread_mailbox_outlined,
+          keyboardType: TextInputType.number,
         ),
 
         SizedBox(height: ResponsivePadding.formFieldSpacing),
 
-        // State and Country Row
-        Row(
-          children: [
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.stateController,
-                hintText: "State",
-                icon: Icons.map_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-            SizedBox(width: ResponsivePadding.formFieldSpacing),
-            Expanded(
-              child: _buildCompactTextField(
-                controller: controller.countryController,
-                hintText: "Country",
-                icon: Icons.public_outlined,
-                keyboardType: TextInputType.text,
-              ),
-            ),
-          ],
+        _buildCompactTextField(
+          controller: controller.cityController,
+          hintText: "City",
+          icon: Icons.location_city_outlined,
+          keyboardType: TextInputType.text,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        _buildCompactTextField(
+          controller: controller.stateController,
+          hintText: "State",
+          icon: Icons.map_outlined,
+          keyboardType: TextInputType.text,
+        ),
+
+        SizedBox(height: ResponsivePadding.formFieldSpacing),
+
+        _buildCompactTextField(
+          controller: controller.countryController,
+          hintText: "Country",
+          icon: Icons.public_outlined,
+          keyboardType: TextInputType.text,
         ),
 
         SizedBox(height: ResponsivePadding.sectionSpacing),

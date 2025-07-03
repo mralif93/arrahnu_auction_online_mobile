@@ -8,6 +8,7 @@ import 'controllers/home_controller.dart';
 import 'controllers/login_controller.dart';
 import 'controllers/register_controller.dart';
 import 'controllers/dashboard_controller.dart';
+import 'routes/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -116,6 +117,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const MainNavigationView(),
       debugShowCheckedModeBanner: false,
+      getPages: AppRoutes.routes,
       initialBinding: BindingsBuilder(() {
         Get.put(NavigationController());
         Get.put(AccountController());

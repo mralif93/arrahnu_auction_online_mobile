@@ -63,14 +63,12 @@ class LoginView extends GetView<LoginController> {
             margin: AppTheme.getPadding(horizontal: 16),
             child: Center(
               child: Container(
-                height: 80,
                 padding: AppTheme.getPadding(horizontal: 20),
                 child: Image.asset(
                   'assets/images/logo/001.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      height: 80,
                       padding: AppTheme.getPadding(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
@@ -333,12 +331,13 @@ class LoginView extends GetView<LoginController> {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: const Text(
+          child: Text(
             "Forgot Password?",
             style: TextStyle(
-              color: Color(0xFFFE8000),
+              color: AppColors.primary,
               fontSize: 11,
               fontWeight: FontWeight.w600,
+              fontFamily: 'Montserrat',
             ),
           ),
         ),

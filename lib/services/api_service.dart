@@ -96,10 +96,27 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    return post(AuthEndpoints.login, {
-      'email': email,
-      'password': password,
-    });
+    try {
+      final response = await _client.post(
+        Uri.parse(AuthEndpoints.login),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
+      ).timeout(Duration(seconds: ApiConfig.timeoutDuration));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        return responseData;
+      } else {
+        throw Exception('Login failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
   }
 
   Future<Map<String, dynamic>> verifyEmail(String token) async {
